@@ -6,7 +6,8 @@ import TabViewExample from '../Components/CourseComponents/Tabs';
 
 function CourseDetailScreen() {
   const route = useRoute();
-  const { course } = route.params;
+  const { course, courses } = route.params;
+  
 
   return (
     <View style={{flex: 1}}>
@@ -19,7 +20,7 @@ function CourseDetailScreen() {
           </View>
         </ImageBackground>
       </View>      
-      <TabViewExample courseData = {course} />
+      <TabViewExample courseData = {course} courses = {courses}/>
     </View>
   )
 }

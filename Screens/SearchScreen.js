@@ -76,7 +76,7 @@ const SearchScreen = () => {
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => (
             <View>
-              <CourseCard course={item} showType={'fullBlock'} />
+              <CourseCard course={item} showType={'fullBlock'} courses={courses} />
             </View>
           )}
         />

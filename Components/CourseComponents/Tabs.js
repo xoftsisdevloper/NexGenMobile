@@ -6,12 +6,12 @@ import SubjectsScreen from '../../Screens/CourseCompoScreens/SubjectsScreen';
 import ReviewScreen from '../../Screens/CourseCompoScreens/ReviewScreen';
 import { colorPalette } from '../../assets/styles/Colors';
 
-function TabViewExample({ courseData }) {
+function TabViewExample({ courseData, courses }) {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0); 
 
   const renderScene = SceneMap({
-    first: () => <DescriptionScreen courseData={courseData} />,
+    first: () => <DescriptionScreen courseData={courseData} courses = {courses}/>,
     second: () => <SubjectsScreen courseData={courseData} />,
     third: () => <ReviewScreen courseData={courseData} />,
   });

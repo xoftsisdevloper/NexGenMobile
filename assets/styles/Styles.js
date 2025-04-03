@@ -48,7 +48,7 @@ export const CourseCardStyle = StyleSheet.create({
 export const CourseCardFullBlock = StyleSheet.create({
 
   cardContainer: {
-    marginHorizontal: 5,
+    marginHorizontal: 0,
     padding: 10,
     borderRadius: 10,
     elevation: 0,
@@ -57,8 +57,8 @@ export const CourseCardFullBlock = StyleSheet.create({
 
 
   cardImage: {
-    height: '80',
-    width: '80',
+    height: '100',
+    width: '100',
     borderRadius: 10,
   },
   cardContent: {
@@ -83,11 +83,12 @@ export const CourseCardFullBlock = StyleSheet.create({
 
   cardText: {
     paddingHorizontal: 0,
-    fontSize: 14,    
+    fontSize: 12,    
     flexWrap: 'wrap'
   },
 
   fullBlockImage: {
+    alignSelf: 'center',
   },
 
 });

@@ -1,53 +1,90 @@
-import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { View, Text, Image, TouchableOpacity, FlatList } from 'react-native';
 import { Card } from 'react-native-elements';
 import { CourseCardFullBlock, CourseCardStyle } from '../../assets/styles/Styles';
-import Svg, { Path } from 'react-native-svg';
-import { useNavigation, createStaticNavigation } from '@react-navigation/native';
-import CourseDetailScreen from '../../Screens/CourseDetailScreen';
-import { Rating } from 'react-native-ratings';
+import { useNavigation } from '@react-navigation/native';
 import Ratings from './Ratings';
 
-export const CourseCard = ({ course, showType = 'normal' }) => {
-
+export const CourseCard = ({ course, showType = 'normal', courses }) => {
     const navigation = useNavigation();
-    return (
-        <TouchableOpacity onPress={() => navigation.navigate('CourseDetailScreen', { course: course })} >
-            <Card containerStyle={showType === 'fullBlock' ? CourseCardFullBlock.cardContainer : CourseCardStyle.cardContainer}>
+    let content = null;
 
-                {
-                    showType === 'fullBlock' ? (
+    switch (showType) {
+        case 'fullBlock':
+            content = (
+                <View style={{ flexDirection: 'row', gap: 3 }}>
+                    <View style={CourseCardFullBlock.cardContent}>
+                        <Text style={CourseCardFullBlock.cardTitle}>{course.name}</Text>
+                        <Text style={CourseCardFullBlock.cardText} numberOfLines={2}>{course.description}</Text>
+                        <Ratings ratings={course.ratings} />
+                    </View>
+                    <View style={CourseCardFullBlock.fullBlockImage}>
+                        <Image
+                            source={{ uri: course.imageUrl }}
+                            style={CourseCardFullBlock.cardImage}
+                            resizeMode="cover"
+                        />
+                    </View>
+                </View>
+            );
+            break;
 
-                        <View style={{ flexDirection: 'row', gap: 5, }}>
-
+        case 'default':
+            content = (
+                <View style={{ marginBottom: 10 }}>
+                    <Image
+                        source={{ uri: course.imageUrl }}
+                        style={CourseCardStyle.cardImage}
+                        resizeMode="cover"
+                    />
+                    <View style={CourseCardStyle.cardContent}>
+                        <Text style={CourseCardStyle.cardTitle}>{course.name}</Text>
+                        <Ratings ratings={course.ratings} page={'home-slider'} />
+                    </View>
+                </View>
+            );
+            break;
+        case 'suggestionBlock':
+            content = (
+                <FlatList
+                    data={courses}
+                    keyExtractor={(item) => item._id}
+                    renderItem={({ item }) => (
+                        <View style={{ flexDirection: 'row', gap: 3 }}>
                             <View style={CourseCardFullBlock.cardContent}>
-                                <Text style={CourseCardFullBlock.cardTitle}>{course.name}</Text>
-                                <Text style={CourseCardFullBlock.cardText} numberOfLines={1}>{course.description}</Text>
-                                <Ratings ratings = {course.ratings}/>
+                                <Text style={CourseCardFullBlock.cardTitle}>{item.name}</Text>
+                                <Text style={CourseCardFullBlock.cardText} numberOfLines={2}>{item.description}</Text>
+                                <Ratings ratings={item.ratings} />
                             </View>
                             <View style={CourseCardFullBlock.fullBlockImage}>
                                 <Image
-                                    source={{ uri: course.imageUrl }}
-                                    style={showType === 'fullBlock' ? CourseCardFullBlock.cardImage : CourseCardStyle.cardImage}
+                                    source={{ uri: item.imageUrl }}
+                                    style={CourseCardFullBlock.cardImage}
                                     resizeMode="cover"
                                 />
                             </View>
                         </View>
-                    ) : (
-                        <View style={{ marginBottom: 10 }}>
-                            <Image
-                                source={{ uri: course.imageUrl }}
-                                style={showType === 'fullBlock' ? CourseCardFullBlock.cardImage : CourseCardStyle.cardImage}
-                                resizeMode="cover"
-                            />
-                            <View style={showType === 'fullBlock' ? CourseCardFullBlock.cardContent : CourseCardStyle.cardContent}>
-                                <Text style={showType === 'fullBlock' ? CourseCardFullBlock.cardTitle : CourseCardStyle.cardTitle}>{course.name}</Text>
-                                <Ratings ratings = {course.ratings} page={'home-slider'}/>
-                            </View>
-                        </View>
-                    )
+                        )}
+                />
 
-                }
+            );
+            break;
+
+        default:
+            content = (
+                <View style={{ marginBottom: 10 }}>
+                    <View style={CourseCardStyle.cardContent}>
+                        <Text style={CourseCardStyle.cardTitle}>No Courses Found</Text>
+                    </View>
+                </View>
+            );
+    break;
+    }
+
+    return (
+        <TouchableOpacity onPress={() => navigation.navigate('CourseDetailScreen', { course: course, courses: courses })}>
+            <Card containerStyle={showType === 'fullBlock' ? CourseCardFullBlock.cardContainer : CourseCardStyle.cardContainer}>
+                {content}
             </Card>
         </TouchableOpacity>
     );
