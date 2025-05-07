@@ -11,7 +11,9 @@ const LoginScreen = ({route}) => {
   const [showPassword, setShowPassword] = useState(false);
   const navigation = useNavigation();
   const { setAuthUser } = route.params;
-
+  const { role } = route.params || {};
+  
+  
   // Handle login
   const handleLogin = async () => {
     if (!username || !password) {
@@ -51,14 +53,14 @@ const LoginScreen = ({route}) => {
 
   // Navigate to Register screen
   const handleSignUp = () => {
-    navigation.navigate('Register');
+    navigation.navigate('Register', { role: role });
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.formContainer}>
         <Image
-          source={require('../../assets/images/NexGenImage.png')}
+          source={role === 'Teacher' ? require('../../assets/images/teacher.png') : require('../../assets/images/student.png')}
           style={styles.logoImage}
         />
         <TextInput
@@ -110,7 +112,7 @@ const styles = StyleSheet.create({
   },
   logoImage: {
     width: 'auto',
-    height: 150,
+    height: 100,
     resizeMode: 'contain',
     marginBottom: 10,
   },

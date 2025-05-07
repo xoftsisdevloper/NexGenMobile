@@ -14,3 +14,18 @@ export const fetchCourses = async () => {
     console.error(`Error fetching courses error is: ${error}`);
   }
 };
+
+export const AddJoinCodeRequest = async (data) => {
+  try {
+    console.log('Join code data:', data.userId);
+    const response = await fetchDatas('post', `/courses/request-join`, data);
+    console.log('response', response)
+    if (response) {
+      console.log('Join code added successfully:', response.message);
+      return { success: true, data: response };
+    }
+  } catch (error) {    
+    console.error('Error during adding join code:', error.response?.data?.message || error.message);
+    return { success: false, error: error.response?.data?.message || error.message };
+  }
+}

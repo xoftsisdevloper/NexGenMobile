@@ -13,6 +13,14 @@
   import RegisterScreen from '../Screens/SessionsScreens/RegisterScreen';
 import { useAuth } from './AuthContext';
 import EditProfileScreen from '../Screens/EditProfileScreen';
+import LessonHubScreen from '../Screens/LessonHubScreen';
+import LessonPlan from '../Screens/LessonPlan';
+import MeterialList from '../Screens/MeterialList';
+import TestScreen from '../Screens/TestScreen';
+import ResultScreen from '../Screens/ResultScreen';
+import ComparisonScreen from '../Screens/ComparisonScreen';
+import SolutionsScreen from '../Screens/SolutionScreen';
+import SolutionExplanationScreen from '../Screens/SolutionExplanationScreen';
 
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
@@ -26,6 +34,14 @@ import EditProfileScreen from '../Screens/EditProfileScreen';
         <Stack.Screen name="MaterialScreen" component={MaterialScreen} options={{ title: 'Material' }} />
         <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Profile' }} />
         <Stack.Screen name="UserDetails" component={EditProfileScreen} options={{ title: 'Edit Your Profile' }} />
+        <Stack.Screen name="LessonHub" component={LessonHubScreen} options={{ title: 'Lesson Overview' }} />
+        <Stack.Screen name="LessonPlan" component={LessonPlan} options={{ title: 'Lesson Objectives' }} />
+        <Stack.Screen name="MeterialList" component={MeterialList} options={{ title: 'Meterials' }} />
+        <Stack.Screen name="TestScreen" component={TestScreen} options={{ title: 'Test' }} />
+        <Stack.Screen name="ResultScreen" component={ResultScreen} options={{ title: 'Result' }} />
+        <Stack.Screen name="ComparisonScreen" component={ComparisonScreen} options={{ title: 'Comparison' }} />
+        <Stack.Screen name="SolutionScreen" component={SolutionsScreen} options={{ title: 'Solution' }} />
+        <Stack.Screen name="SolutionExplainScreen" component={SolutionExplanationScreen} options={{ title: 'Solution' }} />
       </Stack.Navigator>
     );
   };

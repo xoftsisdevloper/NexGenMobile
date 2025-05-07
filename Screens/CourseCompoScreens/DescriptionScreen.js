@@ -8,6 +8,8 @@ import CourseCard from '../../Components/CourseComponents/CourseCard'
 import Ratings from '../../Components/CourseComponents/Ratings'
 import { Image } from 'react-native-elements'
 import { useNavigation } from '@react-navigation/native'
+import RenderHTML from 'react-native-render-html';
+
 
 export default function DescriptionScreen({ courseData, courses }) {
   const navigation = useNavigation();
@@ -37,17 +39,25 @@ export default function DescriptionScreen({ courseData, courses }) {
             </View>
           </View>
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>Description:</Text>
-            <Text>{courseData.description}</Text>
+            <Text style={styles.title}>Course Objectives:</Text>
+            <RenderHTML
+              contentWidth={100}
+              source={{ html: courseData.description }}
+              baseStyle={{ fontSize: 14, color: '#000', backgroundColor: colorPalette.aliceBlue, padding: 10, borderRadius: 5, marginVertical: 5 }}
+            />
           </View>
         </View>
         <View style={[styles.titleContainer, { marginHorizontal: 15 }]}>
-          <Text style={{paddingVertical: 10}}>Suggested Course</Text>
+          
+          <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: colorPalette.aliceBlue, paddingHorizontal: 10, borderRadius: 5, marginVertical: 5 }}>
+            <Text style={CourseCardStyle.cardDetailText}>Suggested Course</Text>
+          </View>
+
           <FlatList
             data={fileterdCourses}
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => (
-              <View style={{ marginBottom: 15 }}>
+              <View style={{ marginVertical: 10, backgroundColor: colorPalette.transBlue, padding: 10, borderRadius: 10 }}>
                 <TouchableOpacity onPress={() => navigation.navigate('CourseDetailScreen', { course: item, courses: courses })}>
                   <View style={{ flexDirection: 'row', gap: 3 }}>
                     <View style={CourseCardFullBlock.cardContent}>
@@ -58,7 +68,7 @@ export default function DescriptionScreen({ courseData, courses }) {
                     <View style={CourseCardFullBlock.fullBlockImage}>
                       <Image
                         source={{ uri: item.imageUrl }}
-                        style={[CourseCardFullBlock.cardImage, {width: 80, height: 80}] }
+                        style={[CourseCardFullBlock.cardImage, {width: 100, height: 100}] }
                         resizeMode="cover"
                       />
                     </View>

@@ -60,7 +60,12 @@ const RegisterScreen = ({ route }) => {
   const [showIns, setShowIns] = useState(false);
   const [showCls, setShowCls] = useState(false);
   const [showCgd, setShowCgd] = useState(false);
-
+  const [expertise, setExpertise] = useState('');
+  const [showExpertise, setShowExpertise] = useState(false);
+  const [experience, setExperience] = useState('');
+  const [showExperience, setShowExperience] = useState(false);
+  const [showEducation, setShowEducation] = useState(false);
+  const { role } = route.params || {};
   const handleRegister = async () => {
     if (
       !username ||
@@ -70,7 +75,8 @@ const RegisterScreen = ({ route }) => {
       !confirmPassword ||
       (educationLevel === 'school' && (!institution || !schoolClass)) ||
       (educationLevel === 'college' && (!institution || !collegeDegree)) ||
-      (educationLevel === 'graduated' && !collegeDegree)
+      (educationLevel === 'graduated' && !collegeDegree) ||
+      (role === 'teacher' && (!expertise || !experience))
     ) {
       Toast.show({
         type: 'error',
@@ -100,6 +106,9 @@ const RegisterScreen = ({ route }) => {
         educationLevel,
         collegeDegree,
         customCollegeDegree: collegeDegree === 'other' ? customCollegeDegree : null,
+        expertise,
+        experience,
+        role: role.toLowerCase(),
       };
 
       const result = await userSignUp({ data });
@@ -151,6 +160,21 @@ const RegisterScreen = ({ route }) => {
     }
   }, [educationLevel]);
 
+  useEffect(() => {
+    if (role.toLowerCase() === 'teacher') {
+      setShowCgd(true);
+      setShowEducation(false);
+      setShowExperience(true);
+      setShowExpertise(true);
+      
+    } else {
+      setShowCgd(false);
+      setShowEducation(true);
+      setShowExperience(false);
+      setShowExpertise(false);
+    }
+  }, [role]);
+
   console.log(setAuthUser);
 
   return (
@@ -187,20 +211,24 @@ const RegisterScreen = ({ route }) => {
           value={phoneNumber}
           onChangeText={setPhoneNumber}
         />
+        {
+          showEducation && (
 
-        <DropDownPicker
-          open={educationOpen}
-          value={educationLevel}
-          items={edlevel}
-          setOpen={setEducationOpen}
-          setValue={setEducationLevel}
-          setItems={setEdLevel}
-          style={[styles.formView]}
-          textStyle={{ color: '#000' }}
-          placeholder="Select Educational Level"
-          dropDownContainerStyle={{ zIndex: 999999 }}
+            <DropDownPicker
+              open={educationOpen}
+              value={educationLevel}
+              items={edlevel}
+              setOpen={setEducationOpen}
+              setValue={setEducationLevel}
+              setItems={setEdLevel}
+              style={[styles.formView]}
+              textStyle={{ color: '#000' }}
+              placeholder="Select Educational Level"
+              dropDownContainerStyle={{ zIndex: 999999 }}
 
-        />
+            />
+          )
+        }
 
         {showIns && (
           <TextInput
@@ -247,6 +275,26 @@ const RegisterScreen = ({ route }) => {
             placeholderTextColor="gray"
             value={customCollegeDegreet}
             onChangeText={setCustomCollegeDegree}
+          />
+        )}
+
+        {showExpertise && (
+          <TextInput
+            style={styles.formView}
+            placeholder="Expertise"
+            placeholderTextColor="gray"
+            value={expertise}
+            onChangeText={setExpertise}
+          />
+        )}
+
+        {showExperience && (
+          <TextInput
+            style={styles.formView}
+            placeholder="Experience"
+            placeholderTextColor="gray"
+            value={experience}
+            onChangeText={setExperience}
           />
         )}
 

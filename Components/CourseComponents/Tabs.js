@@ -21,7 +21,7 @@ function TabViewExample({ courseData, courses }) {
   };
 
   const routes = [
-    { key: 'first', title: 'Description' },
+    { key: 'first', title: 'Details' },
     {
       key: 'second',
       title: formatTabTitle('Subjects', courseData?.subjects?.length),

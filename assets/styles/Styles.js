@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { LogBox, StyleSheet } from "react-native";
 import { colorPalette } from "./Colors";
 
 export const CourseCardStyle = StyleSheet.create({
@@ -20,6 +20,8 @@ export const CourseCardStyle = StyleSheet.create({
     height: '80',
     width: '100%',
     borderRadius: 10,
+    backgroundColor: colorPalette.lightGray,
+    resizeMode: 'center'
   },
   cardContent: {
     padding: 5,
@@ -60,16 +62,21 @@ export const CourseCardFullBlock = StyleSheet.create({
     height: '100',
     width: '100',
     borderRadius: 10,
+    resizeMode: 'center',
+    backgroundColor: colorPalette.lightGray,
+    elevation: 2
   },
   cardContent: {
     flex: 1,
     alignSelf: 'center',
     paddingHorizontal: 10,
+    gap: 5
   },
   cardTitle: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: '700',
     marginBottom: 0,
+    textTransform: 'capitalize',
   },
   cardDetailText: {
     fontSize: 16,
@@ -91,6 +98,54 @@ export const CourseCardFullBlock = StyleSheet.create({
     alignSelf: 'center',
   },
 
+  tagContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginTop: 5
+  },
+
+  courseTypeTag: {
+    backgroundColor: colorPalette.transBlue,
+    width: 100,
+    height: 28,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+  },
+
+  courseTypeText: {
+    color: colorPalette.textgreen,
+    fontWeight: '700',
+    textTransform: 'capitalize',
+    
+  },
+
+  newTag: {
+    borderTopColor: colorPalette.blue,
+    position: 'absolute',
+    top: '-22%',
+    right: '-50%',
+    width: 0,
+    height: 0,
+    borderTopWidth: 70,
+    borderLeftWidth: 70,
+    borderLeftColor: 'transparent',
+    zIndex: 1,
+  },
+
+  newText: {
+    position: 'absolute',
+    top: '-12%',
+    right: '-45%',
+    transform: [{ rotate: '45deg' }],
+    color: colorPalette.white,
+    fontWeight: 'bold',
+    fontSize: 14,
+    zIndex:2,
+  },
+
 });
 
 export const homeStyle = StyleSheet.create({
@@ -110,3 +165,79 @@ export const homeStyle = StyleSheet.create({
     color: '#0147ab'
   }
 });
+
+export const loginBeforeScreenstyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colorPalette.white,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  loginTypeBlocks: {
+    width: 200,
+    height: 'auto',
+    backgroundColor: colorPalette.blue,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 10,
+    elevation: 5,
+    shadowColor: colorPalette.black,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    paddingVertical: 20,
+    borderWidth: 1,
+    borderColor: colorPalette.electricBlue,
+    overflow: 'hidden',
+    cursor: 'pointer',
+  },
+
+  outerBox: {
+    width: '100%',
+    flexDirection: 'column',
+    paddingHorizontal: 20,
+    gap: 10,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+
+  LogoBox: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  logo: {
+    width: 150,
+    resizeMode: 'contain',
+    height: 150,
+  },
+
+  teacherImg: {
+    width: 100,
+    height: 100,
+    marginBottom: 10,
+  },
+
+  titleText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: colorPalette.white,
+    width: '100%',
+    textAlign: 'center',
+  },
+
+  innerBox: {
+    width: '100%',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  
+})

@@ -12,40 +12,27 @@ import { useNavigation } from '@react-navigation/native';
 import CollapsibleView from '../../Components/CourseComponents/Collapse';
 import { CourseCardStyle } from '../../assets/styles/Styles';
 import Svg, { Path } from 'react-native-svg';
+import { colorPalette } from '../../assets/styles/Colors';
 
 export const SubjectsScreen = ({ courseData }) => {
   const navigation = useNavigation();
 
   const renderSubject = (item, index) => (
-    <CollapsibleView title={item.name} index={index}>
+    <View>
       <View style={styles.subjectContainer}>
-        {item.materials.length > 0 && (
-          <View style={styles.unitsContainer}>
-            <Text style={styles.unitTitle}>Lessons</Text>
-            <FlatList
-              data={item.materials}
-              keyExtractor={(item) => item.name}
-              renderItem={({ item, index }) => (
-                <TouchableOpacity
-                  onPress={() => navigation.navigate('MaterialScreen', { item })}
-                  style={styles.unitList}
-                >
-                  <View style={{ alignSelf: 'center' }}>
-                    <Text style={styles.lesson}>Lesson {index + 1} : </Text>
-                  </View>
-                  <View style={{ alignSelf: 'center', flex: 1 }}>
-                    <Text style={styles.unitItem}>{item.name}</Text>
-                  </View>
-                </TouchableOpacity>
-              )}
-            />
+        <TouchableOpacity
+          onPress={() => navigation.navigate('LessonHub', { itemDetails: item })}
+          style={styles.unitList}
+        >
+          <View style={{ alignSelf: 'center', backgroundColor: colorPalette.blue, height: '100%', justifyContent: 'center', alignItems: 'center', width: '20%', borderTopLeftRadius: 5, borderBottomLeftRadius: 5 }}>
+            <Text style={[styles.lesson, { fontSize: 16, fontWeight: '700' }]}>L-{index + 1}</Text>
           </View>
-        )}
-        
-        <Text style={styles.subjectTitle}>Description</Text>
-        <Text style={styles.subjectDescription}>{item.description}</Text>
+          <View style={{ alignSelf: 'center', flex: 1 }}>
+            <Text style={styles.unitItem}>{item.name}</Text>
+          </View>
+        </TouchableOpacity>
       </View>
-    </CollapsibleView>
+    </View>
   );
 
   return (
@@ -53,7 +40,6 @@ export const SubjectsScreen = ({ courseData }) => {
       <ScrollView>
         <View style={styles.textContainer}>
           <View style={styles.vieeDesign}>
-            <Text style={styles.title}>Subjects:</Text>
           </View>
           <FlatList
             data={courseData.subjects}
@@ -97,7 +83,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignContent: 'center',
-    padding: 5,
+    height: 50,
+    backgroundColor: colorPalette.lightGray,
+    borderRadius: 5,
   },
 
   subjectTitle: {
@@ -110,7 +98,7 @@ const styles = StyleSheet.create({
   },
 
   unitItem: {
-    padding: 5,
+    paddingHorizontal: 15,
     flexWrap: 'wrap'
   },
 
@@ -126,7 +114,7 @@ const styles = StyleSheet.create({
   },
 
   lesson: {
-    color: '#0147ab',
+    color: colorPalette.white,
     padding: 5,
   }
 });
