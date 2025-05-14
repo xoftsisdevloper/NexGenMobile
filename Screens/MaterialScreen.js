@@ -32,27 +32,8 @@ function MaterialScreen() {
       <View style={{ width: '100%' }}>
         {unit.content_type.toLowerCase() === 'video' ? (
           <View style={{ position: 'relative', width: '100%', height: videoHeight }}>
-            {loading && (
-              <View
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  backgroundColor: '#000000bd',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  zIndex: 1,
-                }}>
-                <ActivityIndicator size="large" color="#0147ab" />
-                <Text style={{ color: 'white', fontSize: 16, marginTop: 10 }}>
-                  Loading video...
-                </Text>
-              </View>
-            )}
             <Video
-              source={{ uri: VideoUrl }}
+              source={{ uri: unit.content_url }}
               onError={(e) => console.log('Video Error:', e)}
               onProgress={handleProgress}
               style={{ width: '100%', height: '100%' }}
@@ -60,7 +41,21 @@ function MaterialScreen() {
               controls
               onLoadStart={() => setLoading(true)}
               onLoad={() => setLoading(false)}
+              fullscreen={true}
+              fullscreenOrientation="landscape"
             />
+            {loading && (
+              <ActivityIndicator
+                size="large"
+                color="#0000ff"
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: [{ translateX: -25 }, { translateY: -25 }],
+                }}
+              />
+            )}
           </View>
         ) : (
           <View style={{ width: '100%', height: pdfHeight }}>

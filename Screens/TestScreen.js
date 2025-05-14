@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, FlatList, Modal, Image } from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, FlatList, Modal, Image, ActivityIndicator } from 'react-native';
 import { colorPalette } from '../assets/styles/Colors'; // Assuming this exists
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useAuth } from '../Navigation/AuthContext';
-import { submitTestData } from '../API_STORE/test_api';
+import { getAllTestSubmission, submitTestData } from '../API_STORE/test_api';
 import Toast from 'react-native-toast-message';
+import RenderHTML from 'react-native-render-html';
 
 // Mock data representing a test with multiple-choice questions
 const mockTestData = {
@@ -67,6 +68,8 @@ const mockTestData = {
     ],
 };
 
+
+
 const TestScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
@@ -87,9 +90,11 @@ const TestScreen = () => {
     const scrollViewRef = useRef();
     // Get the current question based on the current index
     const currentQuestion = test.test_questions[currentQuestionIndex];
-    const {authUser} = useAuth();
+    const { authUser } = useAuth();
     const [answers, setAnswers] = useState([]);
-
+    const options = ["A", "B", "C", "D"];
+    const [loading, setLoading] = useState(false);
+    const [testTaken, setTestTaken] = useState(false);
     // useEffect to update the question status based on user interaction
     useEffect(() => {
         const newStatuses = [...questionStatuses];
@@ -98,7 +103,7 @@ const TestScreen = () => {
 
         // Update status when a question is visited
         if (newStatuses[currentQuestionIndex] === 'not_visited') {
-            newStatuses[currentQuestionIndex] = isCurrentlyAnswered ? 'answered' : 'unanswered'; 
+            newStatuses[currentQuestionIndex] = isCurrentlyAnswered ? 'answered' : 'unanswered';
             setQuestionStatuses(newStatuses);
         }
         // Update status when an option is selected or deselected
@@ -197,7 +202,7 @@ const TestScreen = () => {
             <Text style={styles.questionNumberText}>{index + 1}</Text>
         </TouchableOpacity>
     );
-    
+
     const CalculateScores = () => {
         let score = 0;
         let correctAnswers = 0;
@@ -211,8 +216,9 @@ const TestScreen = () => {
         let negativemarks = 0;
         skippedQuestions = questionStatuses.filter(status => status === 'not_visited' || status === 'unanswered').length;
         answers?.map(answer => {
-             questionofAnswer = test.test_questions.find(q => q._id === answer.question);
-            if (answer.selected_option && answer.correct_option.includes(questionofAnswer.question_options[answer.selected_option].text)) {
+            questionofAnswer = test.test_questions.find(q => q._id === answer.question);
+
+            if (answer.selected_option && answer.correct_option.includes(options[answer.selected_option])) {
                 correctAnswers += 1;
                 score += currentQuestion.positive_mark;
             } else if (answer.selected_option) {
@@ -227,21 +233,22 @@ const TestScreen = () => {
         averageScore = (score / maxScore) * 100;
         detailAnswer = answers?.map(answer => {
             return {
-                question_id : answer.question,
+                question_id: answer.question,
                 selected_option: answer.selected_option,
-                isCorrect: answer.correct_option.includes(questionofAnswer.question_options[answer.selected_option].text),
+                isCorrect: answer.correct_option.includes(options[answer.selected_option]),
             }
         });
         return { score, correctAnswers, wrongAnswers, skippedQuestions, averageScore, submittedAt, totalQuestions, detailAnswer, negativemarks };
     }
- 
+
     const handleSubmit = async () => {
+
         const data = {
             user: authUser._id,
             test: test._id,
             subject: test.test_subject._id,
             lesson: test.test_lesson._id,
-            score : CalculateScores().score,
+            score: CalculateScores().score,
             correct_answers: CalculateScores().correctAnswers,
             wrong_answers: CalculateScores().wrongAnswers,
             skipped_questions: CalculateScores().skippedQuestions,
@@ -250,12 +257,13 @@ const TestScreen = () => {
             total_questions: CalculateScores().totalQuestions,
             detailed_answers: CalculateScores().detailAnswer,
         }
+
         const data2 = {
             user: authUser._id,
             test: test._id,
             subject: test.test_subject._id,
             lesson: test.test_lesson._id,
-            score : CalculateScores().score,
+            score: CalculateScores().score,
             correct_answers: CalculateScores().correctAnswers,
             wrong_answers: CalculateScores().wrongAnswers,
             skipped_questions: CalculateScores().skippedQuestions,
@@ -267,20 +275,77 @@ const TestScreen = () => {
             test_data: test
         }
 
-        try {
-            const response = await submitTestData(data);
-            console.log('Test submitted successfully:', response);
-            if(response.success) {
-                navigation.navigate('ResultScreen', { result: data2 });
+           if (!testTaken) {
+             try {
+                const response = await submitTestData(data);
+                console.log('Test submitted successfully:', response);
+                if (response.success) {
+                    navigation.navigate('ResultScreen', { result: data2 });
+                }
+                else {
+                    Toast.error("Error submitting test: ", response?.message)
+                }
+            } catch (error) {
+                Toast.error(error?.message)
+                console.error('Error submitting test:', error);
             }
-            else {
-                Toast.error("Error submitting test: " + response.message)
+            finally {
+                setLoading(false);
             }
-        } catch (error) {
-            console.error('Error submitting test:', error);
-        }
-        
+           }
+           else {
+            setLoading(false);
+            navigation.navigate('ResultScreen', { result: data2 });
+           }
+
+        // try {
+        //     const response = await submitTestData(data);
+        //     console.log('Test submitted successfully:', response);
+        //     if (response.success) {
+        //         navigation.navigate('ResultScreen', { result: data2 });
+        //     }
+        //     else {
+        //         Toast.error("Error submitting test: ", response?.message)
+        //     }
+        // } catch (error) {
+        //     Toast.error(error?.message)
+        //     console.error('Error submitting test:', error);
+        // }
+        // finally {
+        //     setLoading(false);
+        // }
+
     }
+
+    useEffect(() => {
+        const setTestTakenData = async () => {
+            try {
+                const response = await getAllTestSubmission();
+
+                if (response?.success) {
+                    const currentTestData = response.data.filter(
+                        (submission) =>
+                            submission.test._id === test._id && submission.user._id === authUser._id
+                    );
+
+                    if (currentTestData.length > 0) {
+                        setTestTaken(true);
+                    } else {
+                        setTestTaken(false);
+                    }
+                } else {
+                    console.warn("Failed to fetch submissions:", response?.message || "Unknown error");
+                }
+            } catch (error) {
+                console.error("Error fetching test submissions:", error);
+            }
+        };
+
+        if (test?._id && authUser?._id) {
+            setTestTakenData();
+        }
+    }, [test?._id, authUser?._id]);
+
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -303,7 +368,12 @@ const TestScreen = () => {
 
                         {/* Container for the actual test question and options */}
                         <View style={styles.testContainer}>
-                            <Text style={styles.questionText}>{currentQuestion?.question_text}</Text>
+                            <RenderHTML
+                                contentWidth={100}
+                                source={{ html: currentQuestion?.question_text }}
+                                baseStyle={styles.questionText}
+                            />
+
                             {
                                 Object.entries(currentQuestion?.question_options || {}).map(([key, value], index) => (
                                     <TouchableOpacity
@@ -320,7 +390,11 @@ const TestScreen = () => {
                                                 selectedOptions[currentQuestionIndex] === key && styles.selectedRadioInner,
                                             ]} />
                                         </View>
-                                        <Text style={styles.optionText}>{value.text}</Text>
+                                        <RenderHTML
+                                            contentWidth={100}
+                                            source={{ html: value?.text }}
+                                            baseStyle={styles.optionText}
+                                        />
                                     </TouchableOpacity>
                                 ))
 
@@ -341,9 +415,19 @@ const TestScreen = () => {
                             >
                                 <Text style={styles.navigationButtonText}>Previous</Text>
                             </TouchableOpacity>
-                            {/* Conditional rendering of the submit button on the last question */}
                             {currentQuestionIndex === totalQuestions - 1 ? (
-                                <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+                                <TouchableOpacity
+                                    style={styles.submitButton}
+                                    onPress={async () => {
+                                        setLoading(true)
+
+                                        // Wait for 10 seconds before navigating to the result page
+                                        await new Promise(resolve => setTimeout(resolve, 10000));
+
+                                        // Call the handleSubmit function to navigate to the result page
+                                        handleSubmit();
+                                    }}
+                                >
                                     <Text style={styles.submitButtonText}>Submit</Text>
                                 </TouchableOpacity>
                             ) : (
@@ -396,6 +480,45 @@ const TestScreen = () => {
                         </View>
                     </View>
                 </Modal>
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={loading}
+                    onRequestClose={() => setIsPaletteVisible(false)}
+                >
+                    <View style={styles.centeredView}>
+                        <View style={[styles.modalView, { width: 50, borderRadius: '50%', height: 50, padding: 0, justifyContent: 'center' }]}>
+                            <ActivityIndicator size={'large'} color={colorPalette?.primary || 'navy'} style={styles.activityIndicator} />
+                        </View>
+                    </View>
+                </Modal>
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={false}
+                    onRequestClose={() => setIsPaletteVisible(false)}
+
+                >
+                    <View style={styles.centeredView}>
+                        <View style={[styles.modalView, { width: 300, height: 300, padding: 0, justifyContent: 'center' }]}>
+
+                            <View>
+                                <Image source={require('../assets/images/already.jpg')} style={{ width: 150, height: 150, resizeMode: 'center' }} />
+                            </View>
+                            <View>
+                                <Text style={{ width: '200', fontSize: 18, color: '#0147ab', marginVertical: 10 }}>
+                                    You already taken Test
+                                </Text>
+                            </View>
+                            <TouchableOpacity
+                                style={[styles.navigationButton, { width: 200 }]}
+                                onPress={() => navigation.goBack()}
+                            >
+                                <Text style={styles.navigationButtonText}>Back</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
 
             </View>
         </SafeAreaView>
@@ -406,7 +529,7 @@ const TestScreen = () => {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: colorPalette?.blue || '#f0f8ff', // A softer background
+        backgroundColor: '#f0f8ff', // A softer background
     },
     header: {
         flexDirection: 'row',
@@ -482,7 +605,7 @@ const styles = StyleSheet.create({
         backgroundColor: colorPalette?.white || 'white',
     },
     selectedOptionButton: {
-        backgroundColor: colorPalette?.accentLight || '#e0f7fa',
+        backgroundColor: colorPalette?.blueLight || '#e0f7fa',
         borderColor: colorPalette?.accent || '#00bcd4',
     },
     optionText: {
@@ -646,19 +769,19 @@ const styles = StyleSheet.create({
         borderColor: colorPalette?.primary || 'navy',
     },
     answeredQuestionNumberButton: {
-        backgroundColor: colorPalette?.accentLight || '#e0f7fa',
+        backgroundColor: "#003f88",
         borderColor: colorPalette?.accent || '#00bcd4',
     },
     markedQuestionNumberButton: {
-        backgroundColor: colorPalette?.warning || '#ffc107',
+        backgroundColor: '#00d5ff',
         borderColor: colorPalette?.warning || '#ffc107',
     },
     markedAnsweredQuestionNumberButton: {
-        backgroundColor: colorPalette?.markedAnswered || '#aed581',
+        backgroundColor: '#168aad',
         borderColor: colorPalette?.markedAnswered || '#aed581',
     },
     notVisitedQuestionNumberButton: {
-        backgroundColor: 'rgb(125, 125, 125)',
+        backgroundColor: '#cccccc',
     },
     questionNumberText: {
         fontSize: 16,

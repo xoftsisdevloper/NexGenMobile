@@ -60,7 +60,7 @@ const LoginScreen = ({route}) => {
     <View style={styles.container}>
       <View style={styles.formContainer}>
         <Image
-          source={role === 'Teacher' ? require('../../assets/images/teacher.png') : require('../../assets/images/student.png')}
+          source={role === 'Teacher' ? require('../../assets/images/teacher.png') : require('../../assets/images/kadiralogo.png')}
           style={styles.logoImage}
         />
         <TextInput
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   },
   logoImage: {
     width: 'auto',
-    height: 100,
+    height: 150,
     resizeMode: 'contain',
     marginBottom: 10,
   },

@@ -17,11 +17,8 @@ export const fetchCourses = async () => {
 
 export const AddJoinCodeRequest = async (data) => {
   try {
-    console.log('Join code data:', data.userId);
     const response = await fetchDatas('post', `/courses/request-join`, data);
-    console.log('response', response)
     if (response) {
-      console.log('Join code added successfully:', response.message);
       return { success: true, data: response };
     }
   } catch (error) {    

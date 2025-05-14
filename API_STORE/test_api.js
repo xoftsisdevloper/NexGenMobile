@@ -3,7 +3,6 @@ import { fetchDatas } from "./api";
 export const fetchAllTests = async () => {
   try {
     const tests = await fetchDatas('get', '/tests');
-    console.log('Tests: sdvgg', tests);
     if (tests) { 
       return tests;
     } else {
@@ -18,7 +17,6 @@ export const fetchAllTests = async () => {
 export const submitTestData = async (data) => {
   try {
     const response = await fetchDatas('post', '/testSubmission/submit', data);
-    console.log('Test submitted successfully:', response);
     return response;
   } catch (error) {
     console.error('Error submitting test:', error);
@@ -46,3 +44,4 @@ export const getAllTestSubmission = async () => {
     throw error; // Rethrow the error for further handling if needed
   }
 }
+

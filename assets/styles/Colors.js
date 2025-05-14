@@ -5,6 +5,7 @@ export const colorPalette = {
     electricBlue: '#71E6E9',
     fluorescentCyan: '#3FE2E4',
     blue: '#0147ab',
+    blueLight: 'rgba(1, 72, 171, 0.12)',
     black: '#000000',
     blackTrans: 'rgba(0, 0, 0, 0.58)',
     darkBlue: '#00008B',

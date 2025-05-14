@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import RenderHTML from 'react-native-render-html';
 
 const mockQuestions = [
   { id: 1, status: 'Correct', question: 'Which of the following is the primary component of natural gas?', attempted: true },
@@ -31,7 +32,7 @@ const SolutionsScreen = () => {
 
   const handleSolutionPress = (question) => {
     const answer = getAnswer(question._id).map((opt) => question.question_options[opt]?.text);
-    navigation.navigate('SolutionExplainScreen', { question: question , answer: answer, isCorrect: isCorrectAnswet(question._id) }); // Make sure SolutionExplanation is registered in your stack
+    navigation.navigate('SolutionExplainScreen', { question: question , answer: answer, isCorrect: getCorrect(question._id) }); // Make sure SolutionExplanation is registered in your stack
   };
 
   const getAtemptedOrnot = (questionId) => {
@@ -39,7 +40,7 @@ const SolutionsScreen = () => {
   }
 
   const isCorrectAnswet = (question) => {
-    console.log("answered", answered);
+    console.log("answered", answered.some(answer => answer.question_id === question._id && answer.isCorrect));
     return answered.some(answer => answer.question_id === question._id && answer.isCorrect);
   }
 
@@ -52,12 +53,22 @@ const SolutionsScreen = () => {
   const getCorrectAnswer = (question_id) => {
     let isCorrect = false;
     let status = 'Unattempted';
+    console.log("isCorrect", answered.some(answer => answer.question_id === question_id))
     if (answered.some(answer => answer.question_id === question_id)) {
-      isCorrect = answered.find(answer => answer.question_id === question_id)?.isCorrect;
+      isCorrect = answered.filter(answer => answer.question_id === question_id)[0]?.isCorrect;
       status = isCorrect ? 'Correct' : 'Wrong';
     }
 
     return status;
+  }
+  const getCorrect = (question_id) => {
+    let isCorrect = false;
+    console.log("isCorrect", answered.some(answer => answer.question_id === question_id))
+    if (answered.some(answer => answer.question_id === question_id)) {
+      isCorrect = answered.filter(answer => answer.question_id === question_id)[0]?.isCorrect;
+     
+    }
+    return isCorrect;
   }
 
 
@@ -91,13 +102,20 @@ const SolutionsScreen = () => {
                 </Text>
               </View>
               <Text style={styles.tabText}>Question: {index + 1}</Text>
-              <Text style={styles.questionText}>{q.question_text}</Text>
+
+              <RenderHTML
+            contentWidth={100}
+            source={{ html: q?.question_text }}
+            baseStyle={styles.questionText}
+          />
               {(getAnswer(q._id) || []).map((opt, idx) => (
                 <View>
                   <Text style={styles.tabText}>Your Answer</Text>
-                  <Text key={idx} style={styles.optionText}>
-                    ({options[idx]}) {q.question_options[opt]?.text}
-                  </Text>
+                  <RenderHTML
+            contentWidth={100}
+            source={{ html: `${q.question_options[opt]?.text}` }}
+            baseStyle={styles.optionText}
+          />
                 </View>
               ))}
             </View>

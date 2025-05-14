@@ -30,20 +30,26 @@ const ComparisonScreen = () => {
     ],
   };
 
-  useEffect(async () => {
-    try {
-      const testst = await getAllTestSubmission();
-      setAllTest(testst)
-    } catch (error) {
-      Toast.error(
-        `This is the error: ${error}`
-      )
-    }
-  }, [])
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const testst = await getAllTestSubmission();
+        setAllTest(testst);
+      } catch (error) {
+        Toast.show({
+          type: 'error',
+          text1: `This is the error: ${error}`,
+        });
+      }
+    };
+    fetchData();
+  }, []);
   
   const setScoreData = () => {
     const currentUserScore =
-      leaderboardData?.rankings?.filter((item) => item.user_id === authUser?.user_id)[0]?.score || 0;
+     testData.score || 0;
+      console.log("currentScore", testData);
+      
     const topperScore = leaderboardData?.best_score || 0;
     let average_score = 0;
     leaderboardData?.rankings?.forEach((item) => {
@@ -98,9 +104,6 @@ const ComparisonScreen = () => {
         </View>
 
         {/* Back Button */}
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Text style={styles.backButtonText}>Back</Text>
-        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );

@@ -108,7 +108,7 @@ const RegisterScreen = ({ route }) => {
         customCollegeDegree: collegeDegree === 'other' ? customCollegeDegree : null,
         expertise,
         experience,
-        role: role.toLowerCase(),
+        role: role?.toLowerCase(),
       };
 
       const result = await userSignUp({ data });
@@ -161,7 +161,7 @@ const RegisterScreen = ({ route }) => {
   }, [educationLevel]);
 
   useEffect(() => {
-    if (role.toLowerCase() === 'teacher') {
+    if (role?.toLowerCase() === 'teacher') {
       setShowCgd(true);
       setShowEducation(false);
       setShowExperience(true);
@@ -180,10 +180,16 @@ const RegisterScreen = ({ route }) => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.formContainer}>
-        <Image
-          source={require('../../assets/images/NexGenImage.png')}
-          style={styles.logoImage}
-        />
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          <Image
+            source={require('../../assets/images/NexGenImage.png')}
+            style={styles.logoImage}
+          />
+          <Image
+            source={require('../../assets/images/kadiralogo.png')}
+            style={styles.logoImage}
+          />
+        </View>
         <Text style={styles.formTitleView}>Join Now</Text>
 
         <TextInput
@@ -358,7 +364,7 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   logoImage: {
-    width: 'auto',
+    width: 130,
     height: 150,
     resizeMode: 'contain',
     marginBottom: 10,

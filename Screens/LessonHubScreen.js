@@ -1,90 +1,129 @@
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  RefreshControl,
+} from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 import { fetchAllTests } from '../API_STORE/test_api';
+import { SvgUri } from 'react-native-svg';
 
 const LessonHubScreen = () => {
-  const route = useRoute();
-  const { itemDetails } = route.params;
-  const subject = itemDetails;
   const navigation = useNavigation();
-  const [tests, setTests] = React.useState([]);
-  const navigateScreen = (screenName, data = null) => {
-    navigation.navigate(screenName, data);
-  }
-  const [preTest, setPreTest] = React.useState(null);
-  const [postTest, setPostTest] = React.useState(null);
+  const route = useRoute();
+  const { itemDetails: subject } = route.params;
+
+  const [tests, setTests] = useState([]);
+  const [preTest, setPreTest] = useState(null);
+  const [postTest, setPostTest] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const loadTests = useCallback(async () => {
+    try {
+      const response = await fetchAllTests();
+      setTests(response.data);
+    } catch (error) {
+      console.error('Error loading tests:', error);
+    }
+  }, []);
+
+  const getTest = (testType) => {
+    return tests.find(
+      (test) => test?.test_subject?._id  === subject?.course_id && test?.test_lesson?._id === subject?._id && test?.test_type === testType
+    );
+  };
 
   useEffect(() => {
-    const fetchTests = async () => {
-      try {
-        const response = await fetchAllTests(); // Replace with your API endpoint
-        console.log('Fetched tests:', response);
-        setTests(response.data);
-      } catch (error) {
-        console.error('Error fetching tests:', error);
-      }
-    }
-    fetchTests();
-  }
-  , [subject]);
+    loadTests();
+  }, [loadTests]);
 
-  const getTestForCourseAndSubject = (subject, test_type ) => {
-    const filteredTests = tests.filter(test => test.test_lesson._id === subject && test.test_type === test_type);
-    return filteredTests.length > 0 ? filteredTests[0] : null;
-  }
+  useEffect(() => {
+    if (tests.length > 0) {
+      setPreTest(getTest('pre-test'));
+      setPostTest(getTest('post-test'));
+    }
+  }, [tests]);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await loadTests();
+    setRefreshing(false);
+  };
+
+  const handleNavigation = (screen, data) => {
+    navigation.navigate(screen, data);
+  };
+
+  const showToast = (message) => {
+    Toast.show({ type: 'error', text1: message, position: 'top' });
+  };
+
+  console.log("preTest", getTest('pre-test'))
+  console.log("subject Id", subject._id)
+
+  const renderCard = (title, image, onPress, disabled = false) => (
+    <View style={[styles.card, disabled && styles.disabledCard]}>
+      <TouchableOpacity onPress={onPress} disabled={disabled}>
+        <View style={styles.imageContainer}>
+          <Image source={image} style={styles.cardImage} />
+        </View>
+        <View style={styles.cardContent}>
+          <Text style={styles.cardTitle}>{title}</Text>
+        </View>
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+    >
       <View style={styles.cardGrid}>
-        <View style={styles.card}>
-          <TouchableOpacity onPress={() => navigateScreen('LessonPlan', { item: subject })}>
-            <View style={styles.imageContainer}>
-              <Image source={require("../assets/images/lessonPlan.jpg")} style={styles.cardImage} />
-            </View>
-            <View style={styles.cardContent}>
-              <Text style={styles.cardTitle}>Lesson Plan</Text>
-              {/* You can add more details here */}
-            </View>
-          </TouchableOpacity>
-        </View>
+        {renderCard('Lesson Detail', require('../assets/images/lessonPlan.jpg'), () =>
+          handleNavigation('LessonPlan', { item: subject })
+        )}
 
-        <View style={styles.card}>
-          <TouchableOpacity onPress={() => navigateScreen('MeterialList', {item: subject})}>
-            <View style={styles.imageContainer}>
-              <Image source={require("../assets/images/meterials2.png")} style={styles.cardImage} />
-            </View>
-            <View style={styles.cardContent}>
-              <Text style={styles.cardTitle}>Meterials</Text>
-              {/* You can add more details here */}
-            </View>
-          </TouchableOpacity>
-        </View>
+        {renderCard('Materials', require('../assets/images/meterials2.png'), () =>
+          handleNavigation('MeterialList', { item: subject })
+        )}
 
-        <View style={styles.card}>
-          <TouchableOpacity onPress={ ()=> navigateScreen('TestScreen', {test: getTestForCourseAndSubject(subject._id, 'pre-test')}) }>
-            <View style={styles.imageContainer}>
-              <Image source={require("../assets/images/test.png")} style={styles.cardImage} />
-            </View>
-            <View style={styles.cardContent}>
-              <Text style={styles.cardTitle}>PRE-Test</Text>
-              {/* You can add more details here */}
-            </View>
-          </TouchableOpacity>
-        </View>
+        {renderCard(
+          'PRE-Test',
+          require('../assets/images/test.png'),
+          () =>
+            preTest
+              ? handleNavigation('TestScreen', { test: preTest })
+              : showToast('PRE-Test is disabled'),
+          !preTest || preTest.test_status === 'disabled'
+        )}
 
-        <View style={styles.card} >
-          <TouchableOpacity onPress={ ()=> navigateScreen('TestScreen', {test: getTestForCourseAndSubject(subject._id, 'post-test')}) }>
-            <View style={styles.imageContainer}>
-              <Image source={require("../assets/images/afterTest.jpg")} style={styles.cardImage} />
-            </View>
-            <View style={styles.cardContent}>
-              <Text style={styles.cardTitle}>POST-Test</Text>
-              {/* You can add more details here */}
-            </View>
-          </TouchableOpacity>
-        </View>
+        {renderCard(
+          'POST-Test',
+          require('../assets/images/afterTest.jpg'),
+          () =>
+            postTest
+              ? handleNavigation('TestScreen', { test: postTest })
+              : showToast('POST-Test is disabled'),
+          !postTest || postTest.test_status === 'disabled'
+        )}
 
+        {renderCard(
+          'Leader Board',
+          require('../assets/images/results.jpg'),
+          () => {
+            if (tests.length > 0) {
+              handleNavigation('LeaderBoard', { pre_test: preTest, post_test: postTest });
+            } else {
+              showToast('No Leaderboard Found');
+            }
+          }
+        )}
       </View>
     </ScrollView>
   );
@@ -106,46 +145,30 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginVertical: 8,
     width: '45%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
     elevation: 5,
     overflow: 'hidden',
+  },
+  disabledCard: {
+    opacity: 0.4,
+  },
+  imageContainer: {
+    padding: 10,
+    alignItems: 'center',
   },
   cardImage: {
     width: '100%',
     height: 100,
-    marginBottom: 0,
     resizeMode: 'center',
-    borderWidth: 0
   },
   cardContent: {
     paddingHorizontal: 10,
-    paddingBottom: 10
+    paddingBottom: 10,
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 5,
-    textAlign: 'center'
-  },
-  cardSubtitle: {
-    fontSize: 12,
-    color: 'gray',
-  },
-  emptyMessage: {
-    fontSize: 16,
-    color: 'gray',
-    marginTop: 20,
     textAlign: 'center',
   },
-  imageContainer: {
-    padding: 10,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center'
-  }
 });
 
 export default LessonHubScreen;

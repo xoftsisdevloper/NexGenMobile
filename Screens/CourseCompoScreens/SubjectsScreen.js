@@ -25,7 +25,7 @@ export const SubjectsScreen = ({ courseData }) => {
           style={styles.unitList}
         >
           <View style={{ alignSelf: 'center', backgroundColor: colorPalette.blue, height: '100%', justifyContent: 'center', alignItems: 'center', width: '20%', borderTopLeftRadius: 5, borderBottomLeftRadius: 5 }}>
-            <Text style={[styles.lesson, { fontSize: 16, fontWeight: '700' }]}>L-{index + 1}</Text>
+            <Text style={[styles.lesson, { fontSize: 16, fontWeight: '700' }]}>Ch-{index + 1}</Text>
           </View>
           <View style={{ alignSelf: 'center', flex: 1 }}>
             <Text style={styles.unitItem}>{item.name}</Text>
@@ -83,9 +83,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignContent: 'center',
-    height: 50,
-    backgroundColor: colorPalette.lightGray,
+    backgroundColor: colorPalette.aliceBlue,
     borderRadius: 5,
+    height: 100
   },
 
   subjectTitle: {
@@ -99,7 +99,11 @@ const styles = StyleSheet.create({
 
   unitItem: {
     paddingHorizontal: 15,
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
+    fontSize: 16,
+    paddingVertical: 10,
+    lineHeight: 22,
+    textAlign: 'left'
   },
 
   unitTitle: {

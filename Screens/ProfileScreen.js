@@ -44,7 +44,7 @@ const ProfileScreen = () => {
 
   const handlePrivacyPolicy = () => {
     // Navigate to Privacy Policy screen
-    // navigation.navigate('PrivacyPolicy');
+      navigation.navigate('PrivacyPolicy');
   };
 
   const handleShareApp = async () => {
@@ -62,7 +62,7 @@ const ProfileScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.profileLogoContainer}>
-        <Image source={require('../assets/images/NexGenImage.png')} style={styles.logo} />
+        <Image source={require('../assets/images/kadiralogo.png')} style={styles.logo} />
       </View>
 
       <View style={styles.optionsContainer}>
@@ -116,6 +116,7 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 100,
     marginBottom: 10,
+    resizeMode: 'center'
   },
   optionsContainer: {
     backgroundColor: 'white',

@@ -1,19 +1,25 @@
 import { View, Text, StyleSheet } from 'react-native'
 import React from 'react'
 import { useRoute } from '@react-navigation/native'
+import RenderHTML from 'react-native-render-html';
 
 const LessonPlan = () => {
     const route = useRoute();
     const item = route.params?.item;
     console.log("Params of Lesson Plan : ", item);
-    
+
     return (
         <View style={styles.container}>
             <View >
                 <Text style={styles.sectionTitle}>Lesson Objectives</Text>
             </View>
             <View >
-                <Text style={styles.sectionContent}>{item.description}</Text>
+
+                <RenderHTML
+                    contentWidth={100}
+                    source={{ html: item?.description }}
+                    baseStyle={styles.sectionContent}
+                />
             </View>
         </View>
     )

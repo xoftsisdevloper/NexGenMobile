@@ -21,7 +21,8 @@ export const CourseCardStyle = StyleSheet.create({
     width: '100%',
     borderRadius: 10,
     backgroundColor: colorPalette.lightGray,
-    resizeMode: 'center'
+    resizeMode: 'center',
+    zIndex: -1
   },
   cardContent: {
     padding: 5,
@@ -57,41 +58,40 @@ export const CourseCardFullBlock = StyleSheet.create({
     borderWidth: 0,
   },
 
-
   cardImage: {
-    height: '100',
+    height: '80',
     width: '100',
     borderRadius: 10,
-    resizeMode: 'center',
+    resizeMode: 'contain',
     backgroundColor: colorPalette.lightGray,
-    elevation: 2
+    elevation: 2,
   },
   cardContent: {
     flex: 1,
     alignSelf: 'center',
     paddingHorizontal: 10,
-    gap: 5
+    gap: 5,
   },
   cardTitle: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: '700',
     marginBottom: 0,
     textTransform: 'capitalize',
   },
   cardDetailText: {
-    fontSize: 16,
-    color: '#000',    
+    fontSize: 14,
+    color: '#000',
     fontWeight: 'bold',
   },
 
-  ScreenBody:{
+  ScreenBody: {
     backgroundColor: colorPalette.aliceBlue,
   },
 
   cardText: {
     paddingHorizontal: 0,
-    fontSize: 12,    
-    flexWrap: 'wrap'
+    fontSize: 12,
+    flexWrap: 'wrap',
   },
 
   fullBlockImage: {
@@ -102,12 +102,12 @@ export const CourseCardFullBlock = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    marginTop: 5
+    marginTop: 5,
   },
 
   courseTypeTag: {
     backgroundColor: colorPalette.transBlue,
-    width: 100,
+    width: '30%',
     height: 28,
     flexDirection: 'row',
     justifyContent: 'center',
@@ -119,31 +119,29 @@ export const CourseCardFullBlock = StyleSheet.create({
     color: colorPalette.textgreen,
     fontWeight: '700',
     textTransform: 'capitalize',
-    
   },
 
   newTag: {
-    borderTopColor: colorPalette.blue,
+    backgroundColor: colorPalette.aliceBlue,
     position: 'absolute',
-    top: '-22%',
-    right: '-50%',
-    width: 0,
-    height: 0,
-    borderTopWidth: 70,
-    borderLeftWidth: 70,
+    width: '50%',
+    height: 30,
     borderLeftColor: 'transparent',
     zIndex: 1,
+    top: -10,
+    right: -10,
+    borderTopRightRadius: 5,
+    borderBottomLeftRadius: 5,
   },
 
   newText: {
     position: 'absolute',
-    top: '-12%',
-    right: '-45%',
-    transform: [{ rotate: '45deg' }],
-    color: colorPalette.white,
+    color: colorPalette.blue,
     fontWeight: 'bold',
-    fontSize: 14,
-    zIndex:2,
+    fontSize: 12,
+    zIndex: 2,
+    right: 0,
+    top: -4,
   },
 
 });
