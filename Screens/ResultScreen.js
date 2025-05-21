@@ -3,6 +3,8 @@ import { StyleSheet, View, Text, TouchableOpacity, SafeAreaView, ScrollView } fr
 import { colorPalette } from '../assets/styles/Colors';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { fetchleaderBoardForTest } from '../API_STORE/test_api';
+import Svg, { Path } from 'react-native-svg';
+import { useAuth } from '../Navigation/AuthContext';
 
 const ResultScreen = () => {
   const resultData = {
@@ -21,39 +23,56 @@ const ResultScreen = () => {
   };
 
   const navigation = useNavigation();
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+      <TouchableOpacity onPress={() => navigation.navigate('Explore')}>
+        <Text style={{ marginHorizontal: 10, fontSize: 30, fontWeight: 'bold' }}>
+          <Svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-left-square-fill" viewBox="0 0 16 16">
+  <Path d="M16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2zm-4.5-6.5H5.707l2.147-2.146a.5.5 0 1 0-.708-.708l-3 3a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708-.708L5.707 8.5H11.5a.5.5 0 0 0 0-1"/>
+</Svg>
+        </Text>
+      </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
   const route = useRoute();
-  const {result} = route.params || {};
+  const { result } = route.params || {};
   const [leaderboardData, setLeaderboardData] = React.useState(null);
   React.useEffect(() => {
     const updateLeaderboard = async () => {
       const data = await fetchleaderBoardForTest(result.test);
       setLeaderboardData(data);
     };
-    
+
     if (result?.test) {
       updateLeaderboard();
     }
   }, [result?.test]);
+  // const currentUser = '';
+  const {authUser} = useAuth();
+  console.log("AuthSUEr", authUser);
   
-  const currentUserRank = leaderboardData?.data?.rankings?.find((item) => item.user_id === result.user_id)?.rank || 0;
+  const currentUserRank = leaderboardData?.data?.rankings?.find((item) => item.user?._id === authUser?._id)?.rank || 0;
+  console.log("leader", result);
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Header */}
+        /* Header */
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Result</Text>
+          {/* <Text style={styles.headerTitle}>Result</Text> */}
         </View>
 
-        {/* Score Grid */}
+        /* Score Grid */
         <View style={styles.scoreGrid}>
-          <ScoreCard label="Overall Score" value={`${result.average_score}/100`} bgColor="#219653" />
-          <ScoreCard label="Rank" value={currentUserRank} bgColor="#f2994a" />
-          <ScoreCard label="Best Score" value={leaderboardData?.data?.best_score || 'N/A'} bgColor="#f2c94c" />
-          <ScoreCard label="Percentile" value={`${result.average_score}%`} bgColor="#2f80ed" />
+          <ScoreCard label="Your Score" value={`${parseInt(result.score)}`} bgColor="#219653" />
+          <ScoreCard label="Rank" value={parseInt(currentUserRank)} bgColor="#f2994a" />
+          <ScoreCard label="Best Score" value={parseInt(leaderboardData?.data?.best_score || 0)} bgColor="#f2c94c" />
+          <ScoreCard label="Percentile" value={`${parseInt(result.average_score)}%`} bgColor="#2f80ed" />
         </View>
 
-        {/* Marks Section */}
+
         <Text style={styles.marksHeader}>Marks</Text>
         <View style={styles.marksGrid}>
           <MarksBox label="Positive" value={result.score} bgColor="#e6ffe6" borderColor="#27ae60" />
@@ -61,16 +80,16 @@ const ResultScreen = () => {
           <MarksBox label="Unattempted" value={result.skipped_questions} bgColor="#ffd29c" borderColor="#bdbdbd" />
           <MarksBox label="Correct" value={result.correct_answers} bgColor="#d4edda" borderColor="#27ae60" />
           <MarksBox label="Wrong" value={result.wrong_answers} bgColor="#f8d7da" borderColor="#eb5757" />
-          <MarksBox label="Final" value={`${result.average_score}/100`} bgColor="#e9ecef" borderColor="#bdbdbd"  />
+          <MarksBox label="Final" value={`${parseInt(result.average_score)}/100`} bgColor="#e9ecef" borderColor="#bdbdbd" />
         </View>
 
         {/* Buttons */}
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.compareButton} onPress={()=> navigation.navigate('ComparisonScreen', {result: leaderboardData, testData: result})}>
+          <TouchableOpacity style={styles.compareButton} onPress={() => navigation.navigate('ComparisonScreen', { result: leaderboardData, testData: result })}>
             <Text style={styles.buttonText}>Compare</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.solutionButton} onPress={()=> navigation.navigate('SolutionScreen', {testData: result})}>
-            <Text style={[styles.buttonText, {color: colorPalette.blue}]}>Solutions</Text>
+          <TouchableOpacity style={styles.solutionButton} onPress={() => navigation.navigate('SolutionScreen', { testData: result })}>
+            <Text style={[styles.buttonText, { color: colorPalette.blue }]}>Solutions</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

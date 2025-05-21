@@ -1,16 +1,17 @@
 import React from 'react'
-import { ImageBackground, StyleSheet, Text, View } from 'react-native'
+import { ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native'
 import CourseCard from '../Components/CourseComponents/CourseCard'
 import { useRoute } from '@react-navigation/native';
 import TabViewExample from '../Components/CourseComponents/Tabs';
+import { useAuth } from '../Navigation/AuthContext';
+import TeacherTab from '../Components/CourseComponents/TeacherTab';
 
 function CourseDetailScreen() {
   const route = useRoute();
   const { course, courses } = route.params;
-  
-
+  const {authUser} = useAuth();
   return (
-    <View style={{flex: 1}}>
+    <ScrollView contentContainerStyle={{flex: 1}}>
       <View>
         <ImageBackground source={{uri: course.imageUrl}} style={styles.imageBg}>
           <View style={[styles.overlay, { mixBlendMode: 'overlay' }]}>
@@ -20,8 +21,14 @@ function CourseDetailScreen() {
           </View>
         </ImageBackground>
       </View>      
-      <TabViewExample courseData = {course} courses = {courses}/>
-    </View>
+      {
+        authUser.role === 'student' ? (
+          <TabViewExample courseData = {course} courses = {courses}/>
+        ) : (
+          <TeacherTab courseData = {course} courses = {courses}/>
+        )
+      }
+    </ScrollView>
   )
 }
 

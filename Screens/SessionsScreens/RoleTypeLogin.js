@@ -40,7 +40,7 @@ const RoleTypeLogin = () => {
       <Animated.View style={[loginBeforeScreenstyles.outerBox, { transform: [{ translateX: slideAnimTeacher }] }]}>
         <TouchableOpacity style={loginBeforeScreenstyles.loginTypeBlocks} onPress={() => SwitchScreen('Login', 'Teacher')}>
           <View style={loginBeforeScreenstyles.innerBox}>
-            <Image source={require('../../assets/images/teacher.png')} style={loginBeforeScreenstyles.teacherImg} />
+            <Image source={require('../../assets/images/teacher1.png')} style={loginBeforeScreenstyles.teacherImg} />
             <Text style={loginBeforeScreenstyles.titleText}>Teacher</Text>
           </View>
         </TouchableOpacity>
@@ -50,7 +50,7 @@ const RoleTypeLogin = () => {
       <Animated.View style={[loginBeforeScreenstyles.outerBox, { transform: [{ translateX: slideAnimStudent }] }]}>
         <TouchableOpacity style={loginBeforeScreenstyles.loginTypeBlocks} onPress={() => SwitchScreen('Login', 'Student')}>
           <View style={loginBeforeScreenstyles.innerBox}>
-            <Image source={require('../../assets/images/student.png')} style={loginBeforeScreenstyles.teacherImg} />
+            <Image source={require('../../assets/images/Learning-bro.png')} style={loginBeforeScreenstyles.teacherImg} />
             <Text style={loginBeforeScreenstyles.titleText}>Student</Text>
           </View>
         </TouchableOpacity>

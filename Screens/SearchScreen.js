@@ -1,32 +1,43 @@
-import { View, Text, TextInput, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, TextInput, FlatList, ActivityIndicator, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { fetchCourses } from '../API_STORE/course_api';
 import CourseCard from '../Components/CourseComponents/CourseCard';
 import { useNavigation } from '@react-navigation/native';
 import { TouchableOpacity } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import { useAuth } from '../Navigation/AuthContext';
+import { colorPalette } from '../assets/styles/Colors';
 
 const SearchScreen = () => {
   const [courses, setCourses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchText, setSearchText] = useState('');
   const navigation = useNavigation();
+  const { authUser } = useAuth();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      const fetchedCourses = await fetchCourses();
+      const filteredCourse = authUser?.role === 'teacher' ? fetchedCourses.filter((f) => f.created_by === authUser._id) : fetchedCourses;
+      setCourses(filteredCourse);
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const fetchedCourses = await fetchCourses();
-        setCourses(fetchedCourses);
-      } catch (error) {
-        console.error('Error fetching courses:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchData();
   }, []);
 
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchData();
+    setRefreshing(false);
+  };
   const handleSearchTextChange = (text) => {
     setSearchText(text);
   };
@@ -40,7 +51,7 @@ const SearchScreen = () => {
   );
 
   return (
-    <View style={{ flex: 1, padding: 20 }}>
+    <ScrollView contentContainerStyle={{ flex: 1, padding: 20, backgroundColor: colorPalette.aliceBlue }} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
       <View>
         <TextInput
           placeholder="Search courses..."
@@ -81,7 +92,7 @@ const SearchScreen = () => {
           )}
         />
       )}
-    </View>
+    </ScrollView>
   );
 };
 
@@ -94,7 +105,7 @@ const styles = StyleSheet.create({
   clearButtonText: {
     color: 'gray',
     marginTop: 2,
-    backgroundColor : 'white',
+    backgroundColor: 'white',
   },
 })
 

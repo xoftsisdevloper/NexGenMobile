@@ -77,3 +77,12 @@ export const userLogout = async () => {
   }
 };
 
+export const userToggling = async (id, data) => {
+  try {
+    const response = await fetchDatas('put', `/users/update-userStatus/${id}`, data);
+    console.log("The toggle Response", response);
+    return {success: true, data: response}
+  } catch (error) {
+        return { success: false, error: error.response?.data?.message || error.message };
+  }
+}

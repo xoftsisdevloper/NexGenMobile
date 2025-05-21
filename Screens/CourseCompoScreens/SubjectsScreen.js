@@ -13,19 +13,20 @@ import CollapsibleView from '../../Components/CourseComponents/Collapse';
 import { CourseCardStyle } from '../../assets/styles/Styles';
 import Svg, { Path } from 'react-native-svg';
 import { colorPalette } from '../../assets/styles/Colors';
+import { useAuth } from '../../Navigation/AuthContext';
 
 export const SubjectsScreen = ({ courseData }) => {
   const navigation = useNavigation();
-
+  const {authUser} = useAuth();
   const renderSubject = (item, index) => (
     <View>
       <View style={styles.subjectContainer}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('LessonHub', { itemDetails: item })}
+          onPress={() =>{authUser?.role === 'student' ?  navigation.navigate('LessonHub', { itemDetails: item }) : navigation.navigate('TeacherLessonHub', { itemDetails: item }) }}
           style={styles.unitList}
         >
           <View style={{ alignSelf: 'center', backgroundColor: colorPalette.blue, height: '100%', justifyContent: 'center', alignItems: 'center', width: '20%', borderTopLeftRadius: 5, borderBottomLeftRadius: 5 }}>
-            <Text style={[styles.lesson, { fontSize: 16, fontWeight: '700' }]}>L-{index + 1}</Text>
+            <Text style={[styles.lesson, { fontSize: 16, fontWeight: '700' }]}>Ch-{index + 1}</Text>
           </View>
           <View style={{ alignSelf: 'center', flex: 1 }}>
             <Text style={styles.unitItem}>{item.name}</Text>
@@ -83,9 +84,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignContent: 'center',
-    height: 50,
-    backgroundColor: colorPalette.lightGray,
+    backgroundColor: colorPalette.aliceBlue,
     borderRadius: 5,
+    height: 100
   },
 
   subjectTitle: {
@@ -99,7 +100,11 @@ const styles = StyleSheet.create({
 
   unitItem: {
     paddingHorizontal: 15,
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
+    fontSize: 16,
+    paddingVertical: 10,
+    lineHeight: 22,
+    textAlign: 'left'
   },
 
   unitTitle: {

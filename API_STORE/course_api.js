@@ -17,15 +17,36 @@ export const fetchCourses = async () => {
 
 export const AddJoinCodeRequest = async (data) => {
   try {
-    console.log('Join code data:', data.userId);
     const response = await fetchDatas('post', `/courses/request-join`, data);
-    console.log('response', response)
     if (response) {
-      console.log('Join code added successfully:', response.message);
       return { success: true, data: response };
     }
   } catch (error) {    
     console.error('Error during adding join code:', error.response?.data?.message || error.message);
+    return { success: false, error: error.response?.data?.message || error.message };
+  }
+}
+
+export const HandleJoinRequest = async (data) => {
+  try {
+    const response = await fetchDatas('post', '/courses/handle-join-request', data);
+    if (response) {
+      return { success: true, data: response };
+    }
+  } catch (error) {
+    console.error('Error during Approving the user:', error.response?.data?.message || error.message);
+    return { success: false, error: error.response?.data?.message || error.message };
+  }
+}
+
+export const GetCourseByID = async (id) => {
+  try {
+    const response = await fetchDatas('get', `/courses/${id}`);
+    if (response) {
+      return { success: true, data: response };
+    }
+  } catch (error) {
+    console.error('Error during Approving the user:', error.response?.data?.message || error.message);
     return { success: false, error: error.response?.data?.message || error.message };
   }
 }

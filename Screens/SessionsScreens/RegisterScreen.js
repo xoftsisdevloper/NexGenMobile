@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import {
+  View, Text, StyleSheet, Image, TextInput, TouchableOpacity, ScrollView,
+} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useNavigation } from '@react-navigation/native';
 import { userSignUp } from '../../API_STORE/user_api';
 import Toast from 'react-native-toast-message';
 import { useAuth } from '../../Navigation/AuthContext';
+import { colorPalette } from '../../assets/styles/Colors';
+import { fetchInstitutions } from '../../API_STORE/ins_api';
 
 const RegisterScreen = ({ route }) => {
   const { setAuthUser } = useAuth();
+  const navigation = useNavigation();
+  const { role } = route.params || {};
+
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -20,12 +27,32 @@ const RegisterScreen = ({ route }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showCPassword, setShowCPassword] = useState(false);
-  const [edlevel, setEdLevel] = useState([
+  const [expertise, setExpertise] = useState('');
+  const [experience, setExperience] = useState('');
+
+  const [institutionList, setInstitutionList] = useState([]);
+  const [educationOpen, setEducationOpen] = useState(false);
+  const [classOpen, setClassOpen] = useState(false);
+  const [degreeOpen, setDegreeOpen] = useState(false);
+  const [institutionOpen, setInstitutionOpen] = useState(false);
+  const [colleges, setColleges] = useState([]);
+  const [schools, setSchools] = useState([]);
+  const [customInstitution, setCustomInstitution] = useState('');
+
+  const [showIns, setShowIns] = useState(false);
+  const [showCls, setShowCls] = useState(false);
+  const [showCgd, setShowCgd] = useState(false);
+  const [showExpertise, setShowExpertise] = useState(false);
+  const [showExperience, setShowExperience] = useState(false);
+  const [showEducation, setShowEducation] = useState(false);
+
+  const edlevel = [
     { label: 'School', value: 'school' },
     { label: 'College', value: 'college' },
     { label: 'Graduated', value: 'graduated' },
-  ]);
-  const [clLevels, setClLevels] = useState([
+  ];
+
+  const clLevels = [
     { label: 'Class 6', value: 'class_6' },
     { label: 'Class 7', value: 'class_7' },
     { label: 'Class 8', value: 'class_8' },
@@ -33,8 +60,9 @@ const RegisterScreen = ({ route }) => {
     { label: 'Class 10', value: 'class_10' },
     { label: 'Class 11', value: 'class_11' },
     { label: 'Class 12', value: 'class_12' },
-  ]);
-  const [cdLevels, setCdLevels] = useState([
+  ];
+
+  const cdLevels = [
     { label: 'BSc', value: 'bsc' },
     { label: 'BA', value: 'ba' },
     { label: 'BCA', value: 'bca' },
@@ -50,95 +78,7 @@ const RegisterScreen = ({ route }) => {
     { label: 'ME', value: 'me' },
     { label: 'MS', value: 'ms' },
     { label: 'Other', value: 'other' },
-  ]);
-
-  const [educationOpen, setEducationOpen] = useState(false);
-  const [classOpen, setClassOpen] = useState(false);
-  const [degreeOpen, setDegreeOpen] = useState(false);
-
-  const navigation = useNavigation();
-  const [showIns, setShowIns] = useState(false);
-  const [showCls, setShowCls] = useState(false);
-  const [showCgd, setShowCgd] = useState(false);
-  const [expertise, setExpertise] = useState('');
-  const [showExpertise, setShowExpertise] = useState(false);
-  const [experience, setExperience] = useState('');
-  const [showExperience, setShowExperience] = useState(false);
-  const [showEducation, setShowEducation] = useState(false);
-  const { role } = route.params || {};
-  const handleRegister = async () => {
-    if (
-      !username ||
-      !email ||
-      !phoneNumber ||
-      !password ||
-      !confirmPassword ||
-      (educationLevel === 'school' && (!institution || !schoolClass)) ||
-      (educationLevel === 'college' && (!institution || !collegeDegree)) ||
-      (educationLevel === 'graduated' && !collegeDegree) ||
-      (role === 'teacher' && (!expertise || !experience))
-    ) {
-      Toast.show({
-        type: 'error',
-        text1: 'Please Fill in all required fields.',
-      });
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      Toast.show({
-        type: 'error',
-        text1: 'Passwords do not match',
-      });
-      return;
-    }
-
-    try {
-      const data = {
-        username,
-        email,
-        phoneNumber,
-        password,
-        confirmPassword,
-        isAdmin: false,
-        institution,
-        schoolClass,
-        educationLevel,
-        collegeDegree,
-        customCollegeDegree: collegeDegree === 'other' ? customCollegeDegree : null,
-        expertise,
-        experience,
-        role: role.toLowerCase(),
-      };
-
-      const result = await userSignUp({ data });
-
-      console.log('API Response:', result);
-
-      if (result && result.success) {
-        Toast.show({
-          type: 'success',
-          text1: 'Registered Successfully',
-        });
-
-        setAuthUser(result.data.user);
-        navigation.navigate('Login');
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: result?.error || 'Registration failed',
-        });
-      }
-    } catch (error) {
-      console.error('Registration error:', error);
-
-      Toast.show({
-        type: 'error',
-        text1: 'An unexpected error occurred. Please try again later.',
-      });
-    }
-  };
-
+  ];
 
   useEffect(() => {
     if (educationLevel === 'school') {
@@ -161,12 +101,12 @@ const RegisterScreen = ({ route }) => {
   }, [educationLevel]);
 
   useEffect(() => {
-    if (role.toLowerCase() === 'teacher') {
+    if (role?.toLowerCase() === 'teacher') {
       setShowCgd(true);
       setShowEducation(false);
       setShowExperience(true);
       setShowExpertise(true);
-      
+      setShowIns(true)
     } else {
       setShowCgd(false);
       setShowEducation(true);
@@ -175,169 +115,242 @@ const RegisterScreen = ({ route }) => {
     }
   }, [role]);
 
-  console.log(setAuthUser);
+  useEffect(() => {
+    const fetchIns = async () => {
+      try {
+        const response = await fetchInstitutions();
+        setInstitutionList(response.data);
+        setSchools(response.data.filter((s) => s.type?.toLowerCase() === 'school'));
+        setColleges(response.data.filter((c) => c.type?.toLowerCase() === 'college'));
+      } catch (error) {
+        console.log("Error fetching institutions:", error);
+      }
+    };
+    fetchIns();
+  }, []);
+
+  const handleRegister = async () => {
+    if (
+      !username ||
+      !email ||
+      !phoneNumber ||
+      !password ||
+      !confirmPassword ||
+      (educationLevel === 'school' && (!institution || !schoolClass)) ||
+      (educationLevel === 'college' && (!institution || !collegeDegree)) ||
+      (educationLevel === 'graduated' && !collegeDegree) ||
+      (role === 'teacher' && (!expertise || !experience))
+    ) {
+      Toast.show({
+        type: 'error',
+        text1: 'Please fill in all required fields.',
+      });
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Toast.show({
+        type: 'error',
+        text1: 'Passwords do not match',
+      });
+      return;
+    }
+
+    try {
+      const data = {
+        username,
+        email,
+        phoneNumber,
+        password,
+        confirmPassword,
+        isAdmin: false,
+        institution: institution === 'other' ? null : institution,
+        otherInstitution: customInstitution,
+        schoolClass,
+        educationLevel,
+        collegeDegree,
+        customCollegeDegree: collegeDegree === 'other' ? customCollegeDegree : null,
+        expertise,
+        experience,
+        role: role.toLowerCase(),
+      };
+      if (institution === 'other' && !customInstitution) {
+        Toast.show({
+          type: 'error',
+          text1: 'Please enter the name of the institution.',
+        });
+        return;
+      }
+
+
+      const result = await userSignUp({ data });
+
+      if (result && result.success) {
+        Toast.show({
+          type: 'success',
+          text1: 'Registered Successfully',
+        });
+        setAuthUser(result.data.user);
+        navigation.navigate('Login');
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: result?.error || 'Registration failed',
+        });
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'An unexpected error occurred. Please try again later.',
+      });
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.formContainer}>
-        <Image
-          source={require('../../assets/images/NexGenImage.png')}
-          style={styles.logoImage}
-        />
+        <Image source={require('../../assets/images/NexGenImage.png')} style={styles.logoImage} />
         <Text style={styles.formTitleView}>Join Now</Text>
 
-        <TextInput
-          style={styles.formView}
-          placeholder="Username"
-          placeholderTextColor="gray"
-          value={username}
-          onChangeText={setUsername}
-        />
+        <TextInput style={styles.formView} placeholder="Username" value={username} onChangeText={setUsername} />
+        <TextInput style={styles.formView} placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" />
+        <TextInput style={styles.formView} placeholder="Phone Number" value={phoneNumber} onChangeText={setPhoneNumber} keyboardType="phone-pad" />
 
-        <TextInput
-          style={styles.formView}
-          placeholder="Email"
-          placeholderTextColor="gray"
-          keyboardType="email-address"
-          value={email}
-          onChangeText={setEmail}
-        />
-
-        <TextInput
-          style={styles.formView}
-          placeholder="Phone Number"
-          placeholderTextColor="gray"
-          keyboardType="phone-pad"
-          value={phoneNumber}
-          onChangeText={setPhoneNumber}
-        />
-        {
-          showEducation && (
-
+        {showEducation && (
+          <View style={{ zIndex: 1000 }}>
             <DropDownPicker
               open={educationOpen}
               value={educationLevel}
               items={edlevel}
               setOpen={setEducationOpen}
               setValue={setEducationLevel}
-              setItems={setEdLevel}
-              style={[styles.formView]}
-              textStyle={{ color: '#000' }}
+              style={styles.formView}
               placeholder="Select Educational Level"
-              dropDownContainerStyle={{ zIndex: 999999 }}
-
             />
-          )
+          </View>
+        )}
+
+        {
+          role?.toLowerCase() === 'teacher'
+            ? (
+              <View style={{ zIndex: 900 }}>
+                <DropDownPicker
+                  open={institutionOpen}
+                  value={institution}
+                  items={[
+                    ...colleges.map((i) => ({
+                      label: i.name,
+                      value: i._id,
+                    })),
+                    { label: 'Other', value: 'other' }
+                  ]}
+
+                  setOpen={setInstitutionOpen}
+                  setValue={setInstitution}
+                  style={styles.formView}
+                  placeholder="Select Institution"
+                  zIndex={900}
+                />
+              </View>
+
+            )
+            : showIns && (
+              <View style={{ zIndex: 900 }}>
+                <DropDownPicker
+                  open={institutionOpen}
+                  value={institution}
+                  items={[
+                    ...(educationLevel === 'college' ? colleges : schools).map((i) => ({
+                      label: i.name,
+                      value: i._id,
+                    })),
+                    { label: 'Other', value: 'other' },
+                  ]}
+                  setOpen={setInstitutionOpen}
+                  setValue={setInstitution}
+                  style={styles.formView}
+                  placeholder="Select Institution"
+                />
+              </View>
+            )
         }
 
-        {showIns && (
+        {institution === 'other' && (
           <TextInput
             style={styles.formView}
-            placeholder="Institution"
+            placeholder="Enter Institution Name"
             placeholderTextColor="gray"
-            value={institution}
-            onChangeText={setInstitution}
+            value={customInstitution}
+            onChangeText={setCustomInstitution}
           />
         )}
 
+
         {showCls && (
-          <DropDownPicker
-            open={classOpen}
-            value={schoolClass}
-            items={clLevels}
-            setOpen={setClassOpen}
-            setValue={setSchoolClass}
-            setItems={setClLevels}
-            style={[styles.formView]}
-            textStyle={{ color: '#000' }}
-            placeholder="Select Class Level"
-          />
+          <View style={{ zIndex: 800 }}>
+            <DropDownPicker
+              open={classOpen}
+              value={schoolClass}
+              items={clLevels}
+              setOpen={setClassOpen}
+              setValue={setSchoolClass}
+              style={styles.formView}
+              placeholder="Select Class Level"
+            />
+          </View>
         )}
 
         {showCgd && (
-          <DropDownPicker
-            open={degreeOpen}
-            value={collegeDegree}
-            items={cdLevels}
-            setOpen={setDegreeOpen}
-            setValue={setCollegeDegree}
-            setItems={setCdLevels}
-            style={[styles.formView]}
-            textStyle={{ color: '#000' }}
-            placeholder="Select College Degree"
-          />
+          <View style={{ zIndex: 700 }}>
+            <DropDownPicker
+              open={degreeOpen}
+              value={collegeDegree}
+              items={cdLevels}
+              setOpen={setDegreeOpen}
+              setValue={setCollegeDegree}
+              style={styles.formView}
+              placeholder="Select College Degree"
+            />
+          </View>
         )}
 
         {collegeDegree === 'other' && (
-          <TextInput
-            style={styles.formView}
-            placeholder="Custom College Degree"
-            placeholderTextColor="gray"
-            value={customCollegeDegreet}
-            onChangeText={setCustomCollegeDegree}
-          />
+          <TextInput style={styles.formView} placeholder="Custom College Degree" value={customCollegeDegree} onChangeText={setCustomCollegeDegree} />
         )}
 
         {showExpertise && (
-          <TextInput
-            style={styles.formView}
-            placeholder="Expertise"
-            placeholderTextColor="gray"
-            value={expertise}
-            onChangeText={setExpertise}
-          />
+          <TextInput style={styles.formView} placeholder="Expertise" value={expertise} onChangeText={setExpertise} />
         )}
 
         {showExperience && (
-          <TextInput
-            style={styles.formView}
-            placeholder="Experience"
-            placeholderTextColor="gray"
-            value={experience}
-            onChangeText={setExperience}
-          />
+          <TextInput style={styles.formView} placeholder="Experience" value={experience} onChangeText={setExperience} />
         )}
 
         <View style={styles.passwordContainer}>
-          <TextInput
-            style={styles.passwordInput}
-            placeholder="Password"
-            placeholderTextColor="gray"
-            secureTextEntry={!showPassword}
-            value={password}
-            onChangeText={setPassword}
-          />
-          <TouchableOpacity
-            onPress={() => setShowPassword(!showPassword)}
-            style={styles.showHideButton}
-          >
-            <Text style={styles.showHideText}>
-              {showPassword ? 'Hide' : 'Show'}
-            </Text>
+          <TextInput style={styles.passwordInput} placeholder="Password" secureTextEntry={!showPassword} value={password} onChangeText={setPassword} />
+          <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.showHideButton}>
+            <Text style={styles.showHideText}>{showPassword ? 'Hide' : 'Show'}</Text>
           </TouchableOpacity>
         </View>
+
         <View style={styles.passwordContainer}>
-          <TextInput
-            style={styles.passwordInput}
-            placeholder="Confirm Password"
-            placeholderTextColor="gray"
-            secureTextEntry={!showCPassword}
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-          />
-          <TouchableOpacity
-            onPress={() => setShowCPassword(!showCPassword)}
-            style={styles.showHideButton}
-          >
-            <Text style={styles.showHideText}>
-              {showCPassword ? 'Hide' : 'Show'}
-            </Text>
+          <TextInput style={styles.passwordInput} placeholder="Confirm Password" secureTextEntry={!showCPassword} value={confirmPassword} onChangeText={setConfirmPassword} />
+          <TouchableOpacity onPress={() => setShowCPassword(!showCPassword)} style={styles.showHideButton}>
+            <Text style={styles.showHideText}>{showCPassword ? 'Hide' : 'Show'}</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-          <Text style={styles.registerButtonText}>Register</Text>
-        </TouchableOpacity>
+
+        <View style={styles.buttonRow}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+            <Text style={styles.backButtonText}>Back</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleRegister} style={styles.registerButton}>
+            <Text style={styles.registerButtonText}>Register</Text>
+          </TouchableOpacity>
+        </View>
       </View>
+
       <View style={styles.footerContainer}>
         <Text style={styles.footerText}>Already have an account?</Text>
         <TouchableOpacity onPress={() => navigation.navigate('Login')}>
@@ -355,7 +368,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
-    margin: 0,
   },
   logoImage: {
     width: 'auto',
@@ -368,8 +380,6 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 15,
     backgroundColor: '#ffffff',
-    justifyContent: 'center',
-    alignContent: 'center',
   },
   formView: {
     marginVertical: 5,
@@ -382,7 +392,6 @@ const styles = StyleSheet.create({
   formTitleView: {
     color: '#0147ab',
     fontWeight: 'bold',
-    letterSpacing: 0.5,
     fontSize: 18,
     marginBottom: 10,
     textAlign: 'center',
@@ -409,22 +418,39 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   registerButton: {
-    marginTop: 15,
+    flex: 1,
     backgroundColor: '#0147ab',
-    paddingVertical: 12,
+    padding: 12,
+    marginLeft: 10,
     borderRadius: 8,
     alignItems: 'center',
   },
   registerButtonText: {
-    color: '#ffffff',
+    color: '#fff',
     fontWeight: 'bold',
-    fontSize: 16,
+  },
+  backButton: {
+    flex: 1,
+    backgroundColor: colorPalette.aliceBlue,
+    padding: 12,
+    marginRight: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  backButtonText: {
+    color: '#0147ab',
+    fontWeight: 'bold',
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 15,
   },
   footerContainer: {
     marginTop: 20,
-    alignItems: 'center',
     flexDirection: 'row',
     gap: 10,
+    alignItems: 'center',
   },
   footerText: {
     color: '#ffffff',

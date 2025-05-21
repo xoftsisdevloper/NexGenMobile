@@ -4,16 +4,17 @@ import { colorPalette } from '../../assets/styles/Colors';
 import { useNavigation } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import { userSignIn } from '../../API_STORE/user_api';
+import Svg, { Path } from 'react-native-svg';
 
-const LoginScreen = ({route}) => {
+const LoginScreen = ({ route }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const navigation = useNavigation();
   const { setAuthUser } = route.params;
   const { role } = route.params || {};
-  
-  
+
+
   // Handle login
   const handleLogin = async () => {
     if (!username || !password) {
@@ -35,7 +36,12 @@ const LoginScreen = ({route}) => {
           text1: 'Login Successfully',
         });
         setAuthUser(result.data.user);
-        navigation.replace('Home');
+        if(result.data?.user?.role === 'student') {
+          navigation.replace('Home');
+        }
+        else {
+          navigation.replace('Courses');
+        }
       } else {
         Toast.show({
           type: 'error',
@@ -88,9 +94,15 @@ const LoginScreen = ({route}) => {
             </Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-          <Text style={styles.loginButtonText}>Login</Text>
-        </TouchableOpacity>
+
+        <View style={styles.buttonRow}>
+          <TouchableOpacity onPress={() => navigation.navigate('RoleLogin')} style={styles.backButton}>
+            <Text style={styles.backButtonText}>Back</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+            <Text style={styles.loginButtonText}>Login</Text>
+          </TouchableOpacity>
+        </View>
       </View>
       <View style={styles.footerContainer}>
         <Text style={styles.footerText}>Don't have an account?</Text>
@@ -154,11 +166,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   loginButton: {
-    marginTop: 15,
-    backgroundColor: '#0147ab',
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
+    flex: 1,
+  backgroundColor: '#0147ab',
+  padding: 12,
+  marginLeft: 10,
+  borderRadius: 8,
+  alignItems: 'center',
   },
   loginButtonText: {
     color: '#ffffff',
@@ -180,6 +193,26 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 14,
   },
+    buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 15,
+  },
+ backButton: {
+    flex: 1,
+    backgroundColor: colorPalette.aliceBlue,
+    padding: 12,
+    marginRight: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+
+  backButtonText: {
+    color: '#0147ab',
+    fontWeight: 'bold',
+  },
+
 });
 
 export default LoginScreen;

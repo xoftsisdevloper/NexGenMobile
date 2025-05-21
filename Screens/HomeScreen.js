@@ -1,38 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
-import CourseCard from '../Components/CourseComponents/CourseCard';
+import {
+  View, FlatList, ScrollView, StyleSheet,
+  TouchableOpacity, ActivityIndicator, Modal, TextInput,
+  RefreshControl
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Image, Text } from 'react-native-elements';
-import logo from '../assets/images/logo_primary.png';
-import { AddJoinCodeRequest, fetchCourses } from '../API_STORE/course_api';
-import { ActivityIndicator } from 'react-native';
-import { homeStyle } from '../assets/styles/Styles';
 import Svg, { Path } from 'react-native-svg';
 import { useNavigation } from '@react-navigation/native';
-import ProfileScreen from './ProfileScreen';
 import { useAuth } from '../Navigation/AuthContext';
-import { courseData } from '../mockdatas/mockData';
-import { Modal } from 'react-native';
-import { colorPalette } from '../assets/styles/Colors';
-import { TextInput } from 'react-native';
+import { fetchCourses, AddJoinCodeRequest } from '../API_STORE/course_api';
+import CourseCard from '../Components/CourseComponents/CourseCard';
 import Toast from 'react-native-toast-message';
+import logo from '../assets/images/Nexgen.png';
+import { homeStyle } from '../assets/styles/Styles';
+import { colorPalette } from '../assets/styles/Colors';
 
-const HomeScreen = ({ navigation }) => {
+const courseTypes = ['all', 'general', 'academic', 'school', 'college'];
+
+const HomeScreen = () => {
   const [courses, setCourses] = useState([]);
+  const [freeCoursesData, setFreeCoursesData] = useState([]);
+  const [filteredCourses, setFilteredCourses] = useState([]);
+  const [selectedType, setSelectedType] = useState('all');
   const [isLoading, setIsLoading] = useState(true);
-  const navigator = useNavigation();
-  const { authUser } = useAuth();
   const [joinCodeModal, setJoinCodeModal] = useState(false);
   const [joincode, setJoincode] = useState('');
-  const [freeCoursesData, setFreeCoursesData] = useState([]);
-  const [approvalPendingCourses, setApprovalpendingCourses] = useState([]);
-  const [approvedCourses, setApprovedCourses] = useState([]);
+  const navigator = useNavigation();
+  const { authUser } = useAuth();
+    const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const fetchData = async () => {
       try {
         const fetchedCourses = await fetchCourses();
-
         setCourses(fetchedCourses);
       } catch (error) {
         console.error('Error fetching courses:', error);
@@ -41,189 +41,198 @@ const HomeScreen = ({ navigation }) => {
       }
     };
 
+  useEffect(() => {    
     fetchData();
   }, []);
 
-
-
-  const onClose = () => {
-    setJoinCodeModal(false);
-    setJoincode('');
+    const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchData();
+    setRefreshing(false);
   };
 
-  const openModal = () => {
-    setJoinCodeModal(true);
-  };
-
-  const handleJoinCode = async () => {
-    try {
-      const request = await AddJoinCodeRequest({ joinCode: joincode, userId: authUser?._id });
-  
-      if (request.success) {
-        const courseForCode = courses.find(course => course.join_code === joincode);
-        if (courseForCode) {
-          setFreeCoursesData(prevFreeCourses => [...prevFreeCourses, courseForCode]);
-          setJoinCodeModal(false);
-          setJoincode('');
-        } else {
-          Toast.show({
-            type: 'error',
-            text1: 'Invalid join code',
-            position: 'top',
-          });
-          console.log('Invalid join code');
-          return;
-        }
-      } 
-       else {
-        Toast.show({
-          type: 'error',
-          text1: request.error || 'Join request failed',
-          position: 'top',
-        });
-      }
-    } catch (error) {
-      console.error('Unexpected error during join code request:', error);
-      Toast.show({
-        type: 'error',
-        text1: 'Unexpected error occurred',
-        position: 'top',
-      });
-    }
-  };
 
   useEffect(() => {
-    const generalCourses = courses
-      .filter(course => course?.course_type?.toLowerCase() === 'general')
-      .map(course => ({
-        ...course,
-        isPending: false,
-      }));
-    setFreeCoursesData(generalCourses);
-  }, [courses]);
+    const generalCourses = courses.filter(course =>
+      course.course_type?.toLowerCase() === 'general'
+    ).map(course => ({
+      ...course,
+      isPending: false,
+    }));
 
-  useEffect(() => {
-    const pendingcourses = courses.filter(course =>
+    const pendingCourses = courses.filter(course =>
       course.joinRequests?.some(request =>
         request.user._id === authUser._id && request.status === 'pending'
       ) && course.course_type !== 'general'
     ).map(course => ({
       ...course,
-      isPending: true
+      isPending: true,
     }));
-  
-    setFreeCoursesData((prev) => {
-      // Avoid adding duplicates
-      const newCourses = pendingcourses.filter(p => !prev.some(c => c._id === p._id));
-      return [...prev, ...newCourses];
-    });
-  }, [courses, authUser]);
 
-  useEffect(() => {
     const approvedCourses = courses.filter(course =>
       course.joinRequests?.some(request =>
         request.user._id === authUser._id && request.status === 'approved'
       ) && course.course_type !== 'general'
     ).map(course => ({
       ...course,
-      isPending: false
+      isPending: false,
     }));
-  
-    setFreeCoursesData((prev) => {
-      // Avoid adding duplicates
-      const newCourses = approvedCourses.filter(p => !prev.some(c => c._id === p._id));
-      return [...prev, ...newCourses];
+
+    const all = [...generalCourses];
+    pendingCourses.forEach(c => {
+      if (!all.some(e => e._id === c._id)) all.push(c);
     });
+    approvedCourses.forEach(c => {
+      if (!all.some(e => e._id === c._id)) all.push(c);
+    });
+
+    setFreeCoursesData(all);
   }, [courses, authUser]);
 
-  const renderCourses = () => {
-    return (
-      <>
-        <View style={[homeStyle.courseFlex, { marginTop: 20 }]}>
-          {isLoading ? (
-            <ActivityIndicator size="large" color="#0000ff" />
-          ) : (
-            <View>
-              <View style={styles.headingContainer}>
-                <Text style={[homeStyle.titleText, { marginBottom: 0 }]}>
-                  Explore Courses
-                </Text>
-                <TouchableOpacity style={styles.joinButton} onPress={openModal}>
-                  <Text style={styles.btnText}>Join with code</Text>
-                </TouchableOpacity>
-                <Modal
-                  animationType="fade"
-                  transparent={true}
-                  visible={joinCodeModal}
-                  onRequestClose={onClose}
-                >
-                  <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                      <TouchableOpacity
-                        style={[styles.button, styles.buttonClose]}
-                        onPress={onClose}
-                      >
-                        <Image source={require('../assets/images/cancel.png')} style={styles.cancelImage} />
-                      </TouchableOpacity>
+  useEffect(() => {
+    if (selectedType === 'all') {
+      setFilteredCourses([...freeCoursesData]);
+    } else {
+      setFilteredCourses(
+        freeCoursesData.filter(course =>
+          course.course_type?.toLowerCase() === selectedType
+        )
+      );
+    }
+  }, [selectedType, freeCoursesData]);
 
-                      <View style={styles.codeForm}>
-                        <Image source={require('../assets/images/joincode.jpg')} style={styles.joincodeImage} />
-                        <TextInput
-                          placeholder="Enter the code to join"
-                          style={styles.formInput}
-                          value={joincode}
-                          onChangeText={setJoincode}
-                        />
-                        <TouchableOpacity style={[styles.submitButton]} onPress={handleJoinCode}>
-                          <Text style={styles.btnText}>Submit</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  </View>
-                </Modal>
-              </View>
-              <FlatList
-                data={freeCoursesData.reverse()}
-                keyExtractor={(item) => item._id}
-                renderItem={({ item }) => (
-                  <CourseCard course={item} courses={courses} showType={'fullBlock'} />
-                )}
-              />
-            </View>
-          )}
-        </View>
-      </>
-    );
+  const handleJoinCode = async () => {
+    try {
+      const response = await AddJoinCodeRequest({
+        joinCode: joincode,
+        userId: authUser?._id
+      });
+
+      if (response.success) {
+        const matchedCourse = courses.find(course => course.join_code === joincode);
+        if (matchedCourse && !freeCoursesData.some(c => c._id === matchedCourse._id)) {
+          setFreeCoursesData(prev => [...prev, matchedCourse]);
+        }
+        onClose();
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: response.error || 'Join request failed',
+        });
+      }
+    } catch (error) {
+      console.error('Join code error:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Unexpected error occurred',
+      });
+    }
   };
+
+  const onClose = () => {
+    setJoinCodeModal(false);
+    setJoincode('');
+  };
+
+  const openModal = () => setJoinCodeModal(true);
+
+  const renderCourseFilters = () => (
+    <View style={styles.filterRow}>
+      {courseTypes.map(type => (
+        <TouchableOpacity
+          key={type}
+          style={[
+            styles.filterButton,
+            selectedType === type && styles.activeFilter
+          ]}
+          onPress={() => setSelectedType(type)}
+        >
+          <Text style={styles.filterText}>
+            {type.charAt(0).toUpperCase() + type.slice(1)}
+          </Text>
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
 
   return (
     <SafeAreaView style={homeStyle.screenBg}>
-      <ScrollView contentContainerStyle={homeStyle.scrollViewContent}>
+      <ScrollView contentContainerStyle={homeStyle.scrollViewContent} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
         <View style={styles.containerParent}>
           <View style={styles.container}>
-            <Image source={logo} style={styles.logo} />
-          </View>
-          <TouchableOpacity style={styles.searchContainer} onPress={() => navigator.navigate('Profile')}>
-            <View style={styles.searchContainer}>
-              <Svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="25"
-                height="25"
-                fill="#0147ab"
-                className="bi bi-person-circle"
-                viewBox="0 0 16 16"
-              >
-                <Path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                <Path
-                  fillRule="evenodd"
-                  d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"
-                />
-              </Svg>
-              <Text style={styles.loginText}>Hi, {authUser ? authUser.username : 'User'} </Text>
-            </View>
+                      <Image source={logo} style={styles.logo} />
+                    </View>
+                    <TouchableOpacity style={styles.searchContainer} onPress={() => navigator.navigate('Profile')}>
+                      <Svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="#0147AB" viewBox="0 0 16 16">
+                        <Path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                        <Path
+                          fillRule="evenodd"
+                          d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"
+                        />
+                      </Svg>
+                      <Text style={styles.loginText}>Hi, {authUser?.username || 'User'}</Text>
+                    </TouchableOpacity>
+        </View>
+
+        <View style={styles.headingContainer}>
+          <Text style={[homeStyle.titleText, { marginBottom: 0 }]}>Explore Courses</Text>
+          <TouchableOpacity style={styles.joinButton} onPress={openModal}>
+            <Text style={styles.btnText}>Join code</Text>
           </TouchableOpacity>
         </View>
-        {renderCourses()}
+
+        {renderCourseFilters()}
+
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={joinCodeModal}
+          onRequestClose={onClose}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <TouchableOpacity
+                style={[styles.button, styles.buttonClose]}
+                onPress={onClose}
+              >
+                <Image
+                  source={require('../assets/images/cancel.png')}
+                  style={styles.cancelImage}
+                />
+              </TouchableOpacity>
+
+              <View style={styles.codeForm}>
+                <Image
+                  source={require('../assets/images/joincode.jpg')}
+                  style={styles.joincodeImage}
+                />
+                <TextInput
+                  placeholder="Enter the code to join"
+                  style={styles.formInput}
+                  value={joincode}
+                  onChangeText={setJoincode}
+                />
+                <TouchableOpacity style={styles.submitButton} onPress={handleJoinCode}>
+                  <Text style={styles.btnText}>Submit</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+
+        <View style={{ marginTop: 0, paddingHorizontal: 14 }}>
+          {isLoading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : (
+            <FlatList
+              data={[...filteredCourses].reverse()}
+              keyExtractor={(item) => item._id}
+              renderItem={({ item }) => (
+                <CourseCard course={item} courses={courses} showType="fullBlock" />
+              )}
+            />
+          )}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -234,7 +243,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     flexDirection: 'row',
   },
-
   containerParent: {
     backgroundColor: '#fff',
     paddingHorizontal: 10,
@@ -242,55 +250,65 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-
   searchContainer: {
     alignSelf: 'center',
     flexDirection: 'row',
     gap: 5,
     alignItems: 'center',
   },
-
-  title: {
-    fontSize: 25,
-    fontWeight: 'bold',
-    color: '#0147ab',
+  loginText: {
+    fontSize: 15,
+    fontWeight: '600',
+    textTransform: 'capitalize',
   },
-
   logo: {
     width: 180,
     height: '100%',
     resizeMode: 'contain',
-    marginRight: 5,
   },
-
-  loginText: {
-    fontSize: 15,
-    fontWeight: '600',
-    cursor: 'pointer',
-  },
-
   headingContainer: {
     flexDirection: 'row',
     paddingHorizontal: 5,
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginTop: 10,
+    paddingHorizontal: 15
   },
-
   joinButton: {
     backgroundColor: '#0147ab',
-    width: 150,
+    width: 100,
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
   },
-
   btnText: {
     color: '#fff',
     fontWeight: '700',
     fontSize: 14,
   },
-
+  filterRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    marginTop: 20,
+    columnGap: 8,
+    
+  },
+  filterButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: '#ddd',
+    borderRadius: 20,
+  },
+  activeFilter: {
+    backgroundColor: '#0147ab',
+  },
+  filterText: {
+    color: '#fff',
+    fontWeight: '600',
+  },
   centeredView: {
     width: '100%',
     height: '100%',
@@ -298,7 +316,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colorPalette.blackTrans,
   },
-
   modalView: {
     backgroundColor: colorPalette.white,
     width: 330,
@@ -306,43 +323,37 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
   },
-
-  cancelImage: {
-    width: 30,
-    height: 30,
-    margin: 5,
-  },
-
   buttonClose: {
     position: 'absolute',
     top: 0,
     right: 0,
   },
-
-  formInput: {
-    borderWidth: 1,
-    width: 250,
-    borderRadius: 5,
-    paddingHorizontal: 10,
+  cancelImage: {
+    width: 30,
+    height: 30,
+    margin: 5,
   },
-
   codeForm: {
     justifyContent: 'center',
     alignItems: 'center',
     height: '100%',
     width: '100%',
   },
-
+  formInput: {
+    borderWidth: 1,
+    width: 250,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginVertical: 10,
+  },
   submitButton: {
     backgroundColor: colorPalette.blue,
-    width: '250',
-    marginTop: 10,
+    width: 250,
     height: 38,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
   },
-
   joincodeImage: {
     width: 250,
     height: 150,

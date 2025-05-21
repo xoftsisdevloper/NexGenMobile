@@ -57,6 +57,7 @@ const MeterialList = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
+    backgroundColor: colorPalette.aliceBlue
   },
   container: {
     flex: 1,

@@ -14,7 +14,7 @@ import { fetchAllTests } from '../API_STORE/test_api';
 import { SvgUri } from 'react-native-svg';
 import { colorPalette } from '../assets/styles/Colors';
 
-const LessonHubScreen = () => {
+const TeacherLessonHubScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { itemDetails: subject } = route.params;
@@ -23,7 +23,7 @@ const LessonHubScreen = () => {
   const [preTest, setPreTest] = useState(null);
   const [postTest, setPostTest] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
-
+  const [currentTest, setCurrentTest] = useState([]);
   const loadTests = useCallback(async () => {
     try {
       const response = await fetchAllTests();
@@ -33,9 +33,9 @@ const LessonHubScreen = () => {
     }
   }, []);
 
-  const getTest = (testType) => {
-    return tests.find(
-      (test) => test?.test_subject?._id  === subject?.course_id && test?.test_lesson?._id === subject?._id && test?.test_type === testType
+  const getTest = () => {
+    return tests.filter(
+      (test) => test?.test_subject?._id  === subject?.course_id && test?.test_lesson?._id === subject?._id 
     );
   };
 
@@ -48,6 +48,7 @@ const LessonHubScreen = () => {
       setPreTest(getTest('pre-test'));
       setPostTest(getTest('post-test'));
     }
+    setCurrentTest(getTest());
   }, [tests]);
 
   const onRefresh = async () => {
@@ -65,7 +66,7 @@ const LessonHubScreen = () => {
   };
 
   console.log("preTest", getTest('pre-test'))
-  console.log("subject Id", subject._id)
+  console.log("subject Id",currentTest)
 
   const renderCard = (title, image, onPress, disabled = false) => (
     <View style={[styles.card, disabled && styles.disabledCard]}>
@@ -95,23 +96,10 @@ const LessonHubScreen = () => {
         )}
 
         {renderCard(
-          'PRE-Test',
-          require('../assets/images/test.png'),
-          () =>
-            preTest
-              ? handleNavigation('TestScreen', { test: preTest })
-              : showToast('PRE-Test is disabled'),
-          !preTest || preTest.test_status === 'disabled'
-        )}
-
-        {renderCard(
-          'POST-Test',
+          'Tests',
           require('../assets/images/afterTest.jpg'),
           () =>
-            postTest
-              ? handleNavigation('TestScreen', { test: postTest })
-              : showToast('POST-Test is disabled'),
-          !postTest || postTest.test_status === 'disabled'
+            handleNavigation('ToggleTest', { test: currentTest })
         )}
 
         {renderCard(
@@ -172,4 +160,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LessonHubScreen;
+export default TeacherLessonHubScreen;

@@ -6,7 +6,8 @@ import RenderHTML from 'react-native-render-html';
 const SolutionExplanationScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { question, answer, isCorrect } = route.params || {};
+  const { question, answer, isCorrect } = route.params;
+  console.log(route.params)
   const options = ['a', 'b', 'c', 'd'];
   console.log("the correct value", isCorrect);
 
@@ -15,16 +16,19 @@ const SolutionExplanationScreen = () => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Question Box */}
         <View style={styles.card}>
-          <Text style={styles.questionText}>
-            {question?.question_text}
-          </Text>
+          <RenderHTML
+            contentWidth={100}
+            source={{ html: question?.question_text }}
+            baseStyle={styles.questionText}
+          />
           <Text style={styles.label}>Your Answer</Text>
-          <Text style={[styles.answerText, { color: isCorrect ? '#219653' : '#ff0011' }]}>{answer.map((opt, idx) => {
-            return `(${options[idx]}) ${opt}`;
-          })}</Text>
-        </View>
-
-        {/* Solution Box */}
+            <RenderHTML
+            contentWidth={100}
+            source={{ html: `<span style="color: ${isCorrect ? '#219653' : '#ff0000'}; font-weight:'700'; font: 16px; text-transform: capitalize">${answer[0]}</span>` }}
+            baseStyle={styles.answerText}
+            />
+            
+            </View>
         <View style={styles.card}>
           <Text style={styles.solutionTitle}>Solution</Text>
           <Text style={styles.answerText}>

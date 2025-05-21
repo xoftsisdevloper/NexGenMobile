@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../Navigation/AuthContext';
 import { userLogout } from '../API_STORE/user_api';
 import SvgIcons from '../assets/styles/SvgIcons';
+import { colorPalette } from '../assets/styles/Colors';
 
 const ProfileScreen = () => {
   const { setAuthUser, authUser } = useAuth();
@@ -67,10 +68,10 @@ const ProfileScreen = () => {
 
       <View style={styles.optionsContainer}>
         <TouchableOpacity onPress={handleUserDetails}>
-          <View style={[styles.optionRow, {flexDirection: 'column'}]}>
+          <View style={[styles.optionRow, { flexDirection: 'column' }]}>
             {SvgIcons.profileLarge}
-            <Text style={[styles.optionText]}>{authUser ? `${authUser.username}  ` :"User Details"} 
-            {SvgIcons.edit_Icons}</Text>
+            <Text style={[styles.optionText]}>{authUser ? `${authUser.username}  ` : "User Details"}
+              {SvgIcons.edit_Icons}</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -105,7 +106,9 @@ const ProfileScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    margin: 20,
+    flex: 1,
+    backgroundColor: colorPalette.aliceBlue,
+    padding: 20
   },
   profileLogoContainer: {
     justifyContent: 'center',

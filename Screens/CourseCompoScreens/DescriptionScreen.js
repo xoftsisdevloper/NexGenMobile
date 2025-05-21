@@ -9,17 +9,19 @@ import Ratings from '../../Components/CourseComponents/Ratings'
 import { Image } from 'react-native-elements'
 import { useNavigation } from '@react-navigation/native'
 import RenderHTML from 'react-native-render-html';
+import { useAuth } from '../../Navigation/AuthContext'
 
 
 export default function DescriptionScreen({ courseData, courses }) {
   const navigation = useNavigation();
   const [fileterdCourses, setFilteredCourses] = React.useState([]);
+  const { authUser } = useAuth();
   console.log('courseData:', (courses.some(course => course._id === courseData._id)));
   React.useEffect(() => {
     const filteredCourses = courses.filter(course => course._id !== courseData._id);
     setFilteredCourses(filteredCourses);
-  }, [courses]);  
-  
+  }, [courses]);
+
   return (
     <View style={styles.mainContainer} >
       <ScrollView>
@@ -47,37 +49,41 @@ export default function DescriptionScreen({ courseData, courses }) {
             />
           </View>
         </View>
-        <View style={[styles.titleContainer, { marginHorizontal: 15 }]}>
-          
-          <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: colorPalette.aliceBlue, paddingHorizontal: 10, borderRadius: 5, marginVertical: 5 }}>
-            <Text style={CourseCardStyle.cardDetailText}>Suggested Course</Text>
-          </View>
+        {
+          authUser?.role === 'studentcour' && (
+            <View style={[styles.titleContainer, { marginHorizontal: 15 }]}>
 
-          <FlatList
-            data={fileterdCourses}
-            keyExtractor={(item) => item._id}
-            renderItem={({ item }) => (
-              <View style={{ marginVertical: 10, backgroundColor: colorPalette.transBlue, padding: 10, borderRadius: 10 }}>
-                <TouchableOpacity onPress={() => navigation.navigate('CourseDetailScreen', { course: item, courses: courses })}>
-                  <View style={{ flexDirection: 'row', gap: 3 }}>
-                    <View style={CourseCardFullBlock.cardContent}>
-                      <Text style={CourseCardFullBlock.cardTitle}>{item.name}</Text>
-                      <Text style={CourseCardFullBlock.cardText} numberOfLines={2}>{item.description}</Text>
-                      <Ratings ratings={item.ratings} />
-                    </View>
-                    <View style={CourseCardFullBlock.fullBlockImage}>
-                      <Image
-                        source={{ uri: item.imageUrl }}
-                        style={[CourseCardFullBlock.cardImage, {width: 100, height: 100}] }
-                        resizeMode="cover"
-                      />
-                    </View>
-                  </View>
-                </TouchableOpacity>
+              <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: colorPalette.aliceBlue, paddingHorizontal: 10, borderRadius: 5, marginVertical: 5 }}>
+                <Text style={CourseCardStyle.cardDetailText}>Suggested Course</Text>
               </View>
-            )}
-          />
-        </View>
+
+              <FlatList
+                data={fileterdCourses}
+                keyExtractor={(item) => item._id}
+                renderItem={({ item }) => (
+                  <View style={{ marginVertical: 10, backgroundColor: colorPalette.transBlue, padding: 10, borderRadius: 10 }}>
+                    <TouchableOpacity onPress={() => navigation.navigate('CourseDetailScreen', { course: item, courses: courses })}>
+                      <View style={{ flexDirection: 'row', gap: 3 }}>
+                        <View style={CourseCardFullBlock.cardContent}>
+                          <Text style={CourseCardFullBlock.cardTitle}>{item.name}</Text>
+                          <Text style={CourseCardFullBlock.cardText} numberOfLines={2}>{item.description}</Text>
+                          <Ratings ratings={item.ratings} />
+                        </View>
+                        <View style={CourseCardFullBlock.fullBlockImage}>
+                          <Image
+                            source={{ uri: item.imageUrl }}
+                            style={[CourseCardFullBlock.cardImage, { width: 100, height: 100 }]}
+                            resizeMode="cover"
+                          />
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              />
+            </View>
+          )
+        }
       </ScrollView>
     </View>
   )

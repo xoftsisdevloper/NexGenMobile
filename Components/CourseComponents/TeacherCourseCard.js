@@ -7,7 +7,7 @@ import Ratings from './Ratings';
 import Svg, { Path } from 'react-native-svg';
 import { colorPalette } from '../../assets/styles/Colors';
 
-export const CourseCard = ({ course, showType = 'normal', courses }) => {
+export const TeacherCourseCard = ({ course, showType = 'normal', courses }) => {
     const navigation = useNavigation();
     let content = null;
     const fiveDaysAgo = new Date();
@@ -68,48 +68,6 @@ export const CourseCard = ({ course, showType = 'normal', courses }) => {
             );
             break;
 
-        case 'default':
-            content = (
-                <View style={{ marginBottom: 10 }}>
-                    <Image
-                        source={{ uri: course.imageUrl }}
-                        style={CourseCardStyle.cardImage}
-                        resizeMode="cover"
-                    />
-                    <View style={CourseCardStyle.cardContent}>
-                        <Text style={CourseCardStyle.cardTitle}>{course.name}</Text>
-                        <Ratings ratings={course.ratings} page={'home-slider'} />
-                    </View>
-                </View>
-            );
-            break;
-        case 'suggestionBlock':
-            content = (
-                <FlatList
-                    data={courses}
-                    keyExtractor={(item) => item._id}
-                    renderItem={({ item }) => (
-                        <View style={{ flexDirection: 'row', gap: 3 }}>
-                            <View style={CourseCardFullBlock.cardContent}>
-                                <Text style={CourseCardFullBlock.cardTitle}>{item.name}</Text>
-                                <Text style={CourseCardFullBlock.cardText} numberOfLines={2}>{item.description}</Text>
-                                <Ratings ratings={item.ratings} />
-                            </View>
-                            <View style={CourseCardFullBlock.fullBlockImage}>
-                                <Image
-                                    source={{ uri: item.imageUrl }}
-                                    style={CourseCardFullBlock.cardImage}
-                                    resizeMode="cover"
-                                />
-                            </View>
-
-                        </View>
-                    )}
-                />
-
-            );
-            break;
-
         default:
             content = (
                 <View style={{ marginBottom: 10 }}>
@@ -122,14 +80,14 @@ export const CourseCard = ({ course, showType = 'normal', courses }) => {
     }
 
     return (
-        <TouchableOpacity onPress={() => navigation.navigate('CourseDetailScreen', { course: course, courses: courses })} disabled={course.isPending}>
+        <TouchableOpacity onPress={() => navigation.navigate('ApprovalList', { course: course, courses: courses })} disabled={course.isPending}>
             <Card containerStyle={[showType === 'fullBlock' ? CourseCardFullBlock.cardContainer : CourseCardStyle.cardContainer]}>
                 {content}
 
             </Card>
             {
                 course.isPending && (
-                    <View style={{ backgroundColor: "rgba(191, 191, 191, 0.47)", position: "absolute", top: 15, right: 0, width: "100%", height: 100, justifyContent: "center", alignItems: "center", padding: 0, borderRadius: 10 }}>
+                    <View style={{ backgroundColor: "rgba(191, 191, 191, 0.47)", position: "absolute", top: 15, right: 0, width: "100%", height: 120, justifyContent: "center", alignItems: "center", padding: 0, borderRadius: 10 }}>
                         <Text style={{ fontSize: 14, padding: 10, backgroundColor: 'rgb(255, 221, 0)', borderRadius: 10, color: '#000', fontWeight: '700' }}> Approval Pending</Text>
                     </View>
                 )
@@ -138,4 +96,4 @@ export const CourseCard = ({ course, showType = 'normal', courses }) => {
     );
 };
 
-export default CourseCard;
+export default TeacherCourseCard;
