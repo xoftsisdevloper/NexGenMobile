@@ -46,7 +46,7 @@ const SearchScreen = () => {
     setSearchText('');
   };
 
-  const filteredCourses = courses.filter((course) =>
+  const filteredCourses = courses?.filter((course) =>
     course.name.toLowerCase().includes(searchText.toLowerCase())
   );
 

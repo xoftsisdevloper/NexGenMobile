@@ -234,6 +234,30 @@ const HomeScreen = () => {
           )}
         </View>
       </ScrollView>
+
+      {/* Join Code Modal */}
+      <Modal animationType="fade" transparent visible={joinCodeModal}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <TouchableOpacity style={[styles.button, styles.buttonClose]} onPress={() => setJoinCodeModal(false)}>
+              <Image source={require('../assets/images/cancel.png')} style={styles.cancelImage} />
+            </TouchableOpacity>
+
+            <View style={styles.codeForm}>
+              <Image source={require('../assets/images/joincode.jpg')} style={styles.joincodeImage} />
+              <TextInput
+                placeholder="Enter the code to join"
+                style={styles.formInput}
+                value={joincode}
+                onChangeText={setJoincode}
+              />
+              <TouchableOpacity style={styles.submitButton} onPress={handleJoinCode}>
+                <Text style={styles.btnText}>Submit</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -244,7 +268,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   containerParent: {
-    backgroundColor: '#fff',
+    backgroundColor: '#0147ab',
     paddingHorizontal: 10,
     height: 80,
     flexDirection: 'row',
@@ -268,8 +292,8 @@ const styles = StyleSheet.create({
   },
   headingContainer: {
     flexDirection: 'row',
-    paddingHorizontal: 5,
     justifyContent: 'space-between',
+    paddingHorizontal: 5,
     alignItems: 'center',
     marginTop: 10,
     paddingHorizontal: 15
@@ -285,7 +309,6 @@ const styles = StyleSheet.create({
   btnText: {
     color: '#fff',
     fontWeight: '700',
-    fontSize: 14,
   },
   filterRow: {
     flexDirection: 'row',
@@ -310,8 +333,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   centeredView: {
-    width: '100%',
-    height: '100%',
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colorPalette.blackTrans,
@@ -319,14 +341,14 @@ const styles = StyleSheet.create({
   modalView: {
     backgroundColor: colorPalette.white,
     width: 330,
-    height: 300,
     borderRadius: 10,
-    padding: 10,
+    padding: 20,
+    alignItems: 'center',
   },
   buttonClose: {
     position: 'absolute',
-    top: 0,
-    right: 0,
+    top: 10,
+    right: 10,
   },
   cancelImage: {
     width: 30,
@@ -358,6 +380,9 @@ const styles = StyleSheet.create({
     width: 250,
     height: 150,
     resizeMode: 'center',
+  },
+  codeForm: {
+    alignItems: 'center',
   },
 });
 

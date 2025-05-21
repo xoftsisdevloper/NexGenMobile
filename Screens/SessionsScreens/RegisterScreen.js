@@ -370,7 +370,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   logoImage: {
-    width: 'auto',
+    width: 130,
     height: 150,
     resizeMode: 'contain',
     marginBottom: 10,

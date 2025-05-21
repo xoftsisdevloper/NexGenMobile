@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 export const fetchDatas = async (methodName, url, data = null) => {
-    // const API_ENDPOINT = "http://13.60.241.242:2000/api"; // Ensure correct port
-    const API_ENDPOINT = "http://192.168.190.245:2000/api"; // Ensure correct port
+    const API_ENDPOINT = "http://13.60.238.65:2000/api"; // Ensure correct port
+    // const API_ENDPOINT = "http://192.168.190.245:2000/api"; // Ensure correct port
 
     try {
         let response;
@@ -16,10 +16,8 @@ export const fetchDatas = async (methodName, url, data = null) => {
         switch (methodName.toLowerCase()) {
             case 'get':
                 response = await axios.get(data_url,data, config);
-                console.log("Requesting test:", data_url, "Data:", data);
                 break;
             case 'post':
-                console.log("Requesting:", data_url, "Data:", data);
                 response = await axios.post(data_url, data, config);
                 break;
             case 'put':
@@ -34,9 +32,7 @@ export const fetchDatas = async (methodName, url, data = null) => {
 
         return response.data;
 
-    } catch (error) {
-        console.log(API_ENDPOINT);
-        
+    } catch (error) {        
         console.error("Error fetching data:", error.response?.data || error.message);
         throw error;
     }
