@@ -28,29 +28,28 @@ const HomeScreen = () => {
   const [joincode, setJoincode] = useState('');
   const navigator = useNavigation();
   const { authUser } = useAuth();
-    const [refreshing, setRefreshing] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const fetchData = async () => {
-      try {
-        const fetchedCourses = await fetchCourses();
-        setCourses(fetchedCourses);
-      } catch (error) {
-        console.error('Error fetching courses:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    try {
+      const fetchedCourses = await fetchCourses();
+      setCourses(fetchedCourses);
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  useEffect(() => {    
+  useEffect(() => {
     fetchData();
   }, []);
 
-    const onRefresh = async () => {
+  const onRefresh = async () => {
     setRefreshing(true);
     await fetchData();
     setRefreshing(false);
   };
-
 
   useEffect(() => {
     const generalCourses = courses.filter(course =>
@@ -111,6 +110,7 @@ const HomeScreen = () => {
       if (response.success) {
         const matchedCourse = courses.find(course => course.join_code === joincode);
         if (matchedCourse && !freeCoursesData.some(c => c._id === matchedCourse._id)) {
+          onRefresh();
           setFreeCoursesData(prev => [...prev, matchedCourse]);
         }
         onClose();
@@ -137,8 +137,13 @@ const HomeScreen = () => {
   const openModal = () => setJoinCodeModal(true);
 
   const renderCourseFilters = () => (
-    <View style={styles.filterRow}>
-      {courseTypes.map(type => (
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      style={{ marginTop: 20 }}
+      contentContainerStyle={styles.filterRow}
+    >
+      {courseTypes?.map(type => (
         <TouchableOpacity
           key={type}
           style={[
@@ -148,32 +153,48 @@ const HomeScreen = () => {
           onPress={() => setSelectedType(type)}
         >
           <Text style={styles.filterText}>
-            {type.charAt(0).toUpperCase() + type.slice(1)}
+            {type?.charAt(0)?.toUpperCase() + type?.slice(1)}
           </Text>
         </TouchableOpacity>
       ))}
-    </View>
+    </ScrollView>
   );
+
+  const getFirstName = (fullName) => {
+    if (!fullName) return 'User';
+    const parts = fullName.trim().split(' ');
+    return parts[0] || fullName;
+  };
 
   return (
     <SafeAreaView style={homeStyle.screenBg}>
-      <ScrollView contentContainerStyle={homeStyle.scrollViewContent} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+      <ScrollView
+        contentContainerStyle={homeStyle.scrollViewContent}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
+        {/* Header */}
         <View style={styles.containerParent}>
-          <View style={styles.container}>
-                      <Image source={logo} style={styles.logo} />
-                    </View>
-                    <TouchableOpacity style={styles.searchContainer} onPress={() => navigator.navigate('Profile')}>
-                      <Svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="#0147AB" viewBox="0 0 16 16">
-                        <Path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                        <Path
-                          fillRule="evenodd"
-                          d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"
-                        />
-                      </Svg>
-                      <Text style={styles.loginText}>Hi, {authUser?.username || 'User'}</Text>
-                    </TouchableOpacity>
+          <Image source={logo} style={styles.logo} />
+          <TouchableOpacity style={styles.searchContainer} onPress={() => navigator.navigate('Profile')}>
+            <Svg width={30} height={30} viewBox="0 0 32 32" fill="none">
+              <Path
+                d="M16 16c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm0 2c-4.418 0-13 2.239-13 6.667V30h26v-5.333C29 20.239 20.418 18 16 18z"
+                fill="#0147AB"
+                opacity={0.15}
+              />
+              <Path
+                d="M16 15c3.314 0 6-2.686 6-6s-2.686-6-6-6-6 2.686-6 6 2.686 6 6 6zm0 2c-4.418 0-12 2.239-12 6.667V29h24v-5.333C28 19.239 20.418 17 16 17z"
+                stroke="#0147AB"
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </Svg>
+            <Text style={styles.loginText}>Hi, {getFirstName(authUser?.username) }</Text>
+          </TouchableOpacity>
         </View>
 
+        {/* Title + Join Button */}
         <View style={styles.headingContainer}>
           <Text style={[homeStyle.titleText, { marginBottom: 0 }]}>Explore Courses</Text>
           <TouchableOpacity style={styles.joinButton} onPress={openModal}>
@@ -183,43 +204,7 @@ const HomeScreen = () => {
 
         {renderCourseFilters()}
 
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={joinCodeModal}
-          onRequestClose={onClose}
-        >
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <TouchableOpacity
-                style={[styles.button, styles.buttonClose]}
-                onPress={onClose}
-              >
-                <Image
-                  source={require('../assets/images/cancel.png')}
-                  style={styles.cancelImage}
-                />
-              </TouchableOpacity>
-
-              <View style={styles.codeForm}>
-                <Image
-                  source={require('../assets/images/joincode.jpg')}
-                  style={styles.joincodeImage}
-                />
-                <TextInput
-                  placeholder="Enter the code to join"
-                  style={styles.formInput}
-                  value={joincode}
-                  onChangeText={setJoincode}
-                />
-                <TouchableOpacity style={styles.submitButton} onPress={handleJoinCode}>
-                  <Text style={styles.btnText}>Submit</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
-
+        {/* Course List */}
         <View style={{ marginTop: 0, paddingHorizontal: 14 }}>
           {isLoading ? (
             <ActivityIndicator size="large" color="#0000ff" />
@@ -230,6 +215,9 @@ const HomeScreen = () => {
               renderItem={({ item }) => (
                 <CourseCard course={item} courses={courses} showType="fullBlock" />
               )}
+              ListEmptyComponent={() => (
+                <Text style={{ textAlign: 'center', marginTop: 20 }}>Course Not Found</Text>
+              )}
             />
           )}
         </View>
@@ -239,12 +227,11 @@ const HomeScreen = () => {
       <Modal animationType="fade" transparent visible={joinCodeModal}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <TouchableOpacity style={[styles.button, styles.buttonClose]} onPress={() => setJoinCodeModal(false)}>
+            <TouchableOpacity style={[styles.button, styles.buttonClose]} onPress={onClose}>
               <Image source={require('../assets/images/cancel.png')} style={styles.cancelImage} />
             </TouchableOpacity>
-
             <View style={styles.codeForm}>
-              <Image source={require('../assets/images/joincode.jpg')} style={styles.joincodeImage} />
+              <Image source={require('../assets/images/joincode.png')} style={styles.joincodeImage} />
               <TextInput
                 placeholder="Enter the code to join"
                 style={styles.formInput}
@@ -263,40 +250,38 @@ const HomeScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#fff',
-    flexDirection: 'row',
-  },
   containerParent: {
-    backgroundColor: '#0147ab',
-    paddingHorizontal: 10,
-    height: 80,
+    backgroundColor: '#ffffff',
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
   },
   searchContainer: {
-    alignSelf: 'center',
     flexDirection: 'row',
-    gap: 5,
     alignItems: 'center',
+    gap: 8,
   },
   loginText: {
     fontSize: 15,
     fontWeight: '600',
     textTransform: 'capitalize',
+    color: '#0147AB',
   },
   logo: {
-    width: 180,
-    height: '100%',
+    width: 160,
+    height: 50,
     resizeMode: 'contain',
   },
   headingContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 5,
+    paddingHorizontal: 15,
     alignItems: 'center',
     marginTop: 10,
-    paddingHorizontal: 15
   },
   joinButton: {
     backgroundColor: '#0147ab',
@@ -312,12 +297,10 @@ const styles = StyleSheet.create({
   },
   filterRow: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    flexWrap: 'wrap',
-    marginTop: 20,
-    columnGap: 8,
-    
+    gap: 8,
+    paddingHorizontal: 15,
   },
   filterButton: {
     paddingHorizontal: 12,
@@ -356,21 +339,18 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   codeForm: {
-    justifyContent: 'center',
     alignItems: 'center',
-    height: '100%',
-    width: '100%',
   },
   formInput: {
     borderWidth: 1,
-    width: 250,
+    width: 280,
     borderRadius: 5,
     paddingHorizontal: 10,
     marginVertical: 10,
   },
   submitButton: {
     backgroundColor: colorPalette.blue,
-    width: 250,
+    width: 280,
     height: 38,
     justifyContent: 'center',
     alignItems: 'center',
@@ -380,9 +360,6 @@ const styles = StyleSheet.create({
     width: 250,
     height: 150,
     resizeMode: 'center',
-  },
-  codeForm: {
-    alignItems: 'center',
   },
 });
 

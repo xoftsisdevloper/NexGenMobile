@@ -38,7 +38,7 @@ const Approvals = () => {
     try {
       setIsLoading(true);
       const result = await fetchCourses();
-      const teacherCourser = result.filter((f) => f.created_by === authUser?._id);
+      const teacherCourser = result.filter((f) => f.created_by === authUser?._id && f.course_type != 'general');
       setCourses(teacherCourser || []);
     } catch (err) {
       console.error('Failed to fetch courses:', err);
@@ -117,29 +117,6 @@ const Approvals = () => {
         </View>
       </ScrollView>
 
-      {/* Join Code Modal */}
-      <Modal animationType="fade" transparent visible={joinCodeModal}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <TouchableOpacity style={[styles.button, styles.buttonClose]} onPress={() => setJoinCodeModal(false)}>
-              <Image source={require('../assets/images/cancel.png')} style={styles.cancelImage} />
-            </TouchableOpacity>
-
-            <View style={styles.codeForm}>
-              <Image source={require('../assets/images/joincode.jpg')} style={styles.joincodeImage} />
-              <TextInput
-                placeholder="Enter the code to join"
-                style={styles.formInput}
-                value={joincode}
-                onChangeText={setJoincode}
-              />
-              <TouchableOpacity style={styles.submitButton} onPress={handleJoinCode}>
-                <Text style={styles.btnText}>Submit</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
     </SafeAreaView>
   );
 };

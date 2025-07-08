@@ -2,11 +2,12 @@
 
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { colorPalette } from '../assets/styles/Colors';
 
 const PrivacyPolicyScreen = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Privacy Policy</Text>
+      {/* <Text style={styles.title}>Privacy Policy</Text> */}
 
       <Text style={styles.sectionTitle}>1. Information We Collect</Text>
       <Text style={styles.text}>
@@ -70,7 +71,7 @@ Website: nexgen-e.com
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: '#ffffff',
+    backgroundColor: colorPalette.aliceBlue,
   },
   title: {
     fontSize: 24,
@@ -92,6 +93,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     color: '#333333',
+    paddingHorizontal: 20
   },
 });
 

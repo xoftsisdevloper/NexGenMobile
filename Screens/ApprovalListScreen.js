@@ -14,12 +14,8 @@ const ApprovalListScreen = () => {
   const handleAccept = async (userId) => {
     try {
       const response = await HandleJoinRequest({ courseId: course?._id, userId, action: 'approved' });
-      if (response.success) {
-        Toast.show({ type: 'success', text1: 'Student Approved Successfully!' });
+      Toast.show({ type: 'success', text1: 'Student Approved Successfully!' });
         await getCourseById();
-      } else {
-        Toast.show({ type: 'error', text1: 'Error approving the student. Please try again later.' });
-      }
     } catch (error) {
       console.error('Approval error:', error);
       Toast.show({ type: 'error', text1: 'Something went wrong. Try again.' });
@@ -31,7 +27,7 @@ const ApprovalListScreen = () => {
       const response = await HandleJoinRequest({ courseId: course?._id, userId, action: 'rejected' });
       if (response.success) {
         Toast.show({ type: 'success', text1: 'Student Rejected Successfully!' });
-        await getCourseById();
+        onRefresh();
       } else {
         Toast.show({ type: 'error', text1: 'Error rejecting the student. Please try again later.' });
       }

@@ -45,13 +45,13 @@ const ProfileScreen = () => {
 
   const handlePrivacyPolicy = () => {
     // Navigate to Privacy Policy screen
-      navigation.navigate('PrivacyPolicy');
+    navigation.navigate('PrivacyPolicy');
   };
 
   const handleShareApp = async () => {
     try {
       await Share.share({
-        message: '🎉 Hey there! Discover the amazing world of learning with the Nexgen App! 🌟 Fun games, cool lessons & endless adventures await! 🚀📚 Download now: https://example.com/app',
+        message: '🎉 Hey there! Discover the amazing world of learning with the Nexgen App! 🌟 Fun games, cool lessons & endless adventures await! 🚀📚 Download now: https://drive.google.com/drive/folders/1y1pPDUR56dc63_MQEtjMFn7FOOpNMovw?usp=sharing',
       });
     } catch (error) {
       Alert.alert('Error', 'Oops! Something went wrong while sharing the fun.');
@@ -62,18 +62,34 @@ const ProfileScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.profileLogoContainer}>
-        <Image source={require('../assets/images/kadiralogo.png')} style={styles.logo} />
+      {/* <View style={styles.profileLogoContainer}>
+        <Image source={require('../assets/images/Nexgen.png')} style={styles.logo} />
+      </View> */}
+
+      <View style={{marginTop: 20}} >
+        <TouchableOpacity onPress={handleUserDetails}>
+          <View style={[styles.optionRow, { flexDirection: 'column' }]}>
+            <Image source={require('../assets/images/d-user.png')} style={styles.logo} />
+            <Text style={[styles.optionText, { fontSize: 25 }]}>{authUser ? `${authUser.username} ` : "User Details"}{SvgIcons.edit_Icons}
+            </Text>
+
+          </View>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.optionsContainer}>
-        <TouchableOpacity onPress={handleUserDetails}>
-          <View style={[styles.optionRow, { flexDirection: 'column' }]}>
-            {SvgIcons.profileLarge}
-            <Text style={[styles.optionText]}>{authUser ? `${authUser.username}  ` : "User Details"}
-              {SvgIcons.edit_Icons}</Text>
-          </View>
-        </TouchableOpacity>
+        <View style={styles.optionRow}>
+          {SvgIcons.role}
+          <Text style={styles.optionText}>{authUser?.role || ''}</Text>
+        </View>
+        <View style={styles.optionRow}>
+          {SvgIcons.phone}
+          <Text style={styles.optionText}>{authUser?.phoneNumber || ''}</Text>
+        </View>
+        <View style={styles.optionRow}>
+          {SvgIcons.email}
+          <Text style={styles.optionText}>{authUser?.email || ''}</Text>
+        </View>
       </View>
 
       <View style={styles.optionsContainer}>
@@ -99,7 +115,7 @@ const ProfileScreen = () => {
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.versionText}>Version 1.0.1</Text>
+      <Text style={styles.versionText}>Version 1.8.1</Text>
     </View>
   );
 };
@@ -115,11 +131,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    width: 150,
-    height: 150,
+    width: 250,
+    height: 120,
     borderRadius: 100,
-    marginBottom: 10,
-    resizeMode: 'center'
+    marginBottom: 0,
+    resizeMode: 'contain'
   },
   optionsContainer: {
     backgroundColor: 'white',
@@ -132,17 +148,18 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3,
     shadowOffset: { width: 0, height: 2 }, // Adds shadow on iOS
+    marginVertical: 10
   },
   optionRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 20,
+    rowGap: 30,
+    marginVertical: 10,
+    columnGap: 10
   },
   optionText: {
     fontSize: 16,
-  },
-  optionButton: {
-    marginBottom: 25,
+    textTransform: 'capitalize'
   },
   versionText: {
     fontSize: 15,

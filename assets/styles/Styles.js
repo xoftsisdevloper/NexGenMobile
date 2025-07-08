@@ -107,7 +107,7 @@ export const CourseCardFullBlock = StyleSheet.create({
 
   courseTypeTag: {
     backgroundColor: colorPalette.transBlue,
-    width: '30%',
+    minWidth: '40%',
     height: 28,
     flexDirection: 'row',
     justifyContent: 'center',

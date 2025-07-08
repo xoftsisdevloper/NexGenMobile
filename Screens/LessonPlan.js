@@ -2,6 +2,7 @@ import { View, Text, StyleSheet } from 'react-native'
 import React from 'react'
 import { useRoute } from '@react-navigation/native'
 import RenderHTML from 'react-native-render-html';
+import { colorPalette } from '../assets/styles/Colors';
 
 const LessonPlan = () => {
     const route = useRoute();
@@ -10,9 +11,9 @@ const LessonPlan = () => {
 
     return (
         <View style={styles.container}>
-            <View >
+            {/* <View >
                 <Text style={styles.sectionTitle}>Lesson Objectives</Text>
-            </View>
+            </View> */}
             <View >
 
                 <RenderHTML
@@ -27,8 +28,10 @@ const LessonPlan = () => {
 
 const styles = StyleSheet.create({
     container: {
-        justifyContent: 'center',
+        alignItems: 'center',
         padding: 20,
+        backgroundColor: colorPalette.aliceBlue,
+        flex: 1
     },
 
     sectionTitle: {
@@ -39,8 +42,9 @@ const styles = StyleSheet.create({
     },
 
     sectionContent: {
-        padding: 10,
-        fontSize: 16,
+        paddingHorizontal: 10,
+        fontSize: 18,
+        textTransform: 'capitalize'
     }
 })
 export default LessonPlan

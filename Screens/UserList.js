@@ -21,10 +21,8 @@ const UserList = () => {
   const [searchText, setSearchText] = useState('');
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [courses, setCourses] = useState([]);
-  const [requests, setRequests] = useState([]);
   const { authUser } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [statusFilter, setStatusFilter] = useState('all');
 
   // Filter users based on search & status
@@ -50,101 +48,107 @@ const UserList = () => {
   // Fetch courses
   const loadCourses = useCallback(async () => {
     try {
-      setIsLoading(true);
       const result = await fetchCourses();
       const teacherCourses = result.filter(
         (course) => course.created_by === authUser?._id
       );
-      setCourses(result);
+      setCourses(teacherCourses);
     } catch (err) {
       console.error('Failed to fetch courses:', err);
-    } finally {
-      setIsLoading(false);
     }
   }, [authUser]);
 
-  // Extract requests from courses
+  // Load requests and group by user
   const loadRequests = useCallback((coursesList) => {
-    const allRequests = coursesList.reduce((acc, course) => {
-      return acc.concat(course.joinRequests || []);
-    }, []);
+    const userMap = new Map();
 
-    setRequests(allRequests);
+    coursesList.forEach((course) => {
+      (course.joinRequests || []).forEach((req) => {
+        const user = req.user;
+        if (!user) return;
 
-    const extractedUsers = allRequests
-      .map((req) => req.user)
-      .filter((user) => !!user)
-      .map((user, index) => ({
-        id: user._id || index.toString(),
-        name: user.username || 'Unnamed',
-        email: user.email || 'No Email',
-        phone: user.phoneNumber || 'N/A',
-        status: user.isActive ? 'active' : 'blocked',
-      }));
+        const userId = user._id;
 
-    setUsers(extractedUsers);
+        if (!userMap.has(userId)) {
+          userMap.set(userId, {
+            id: userId,
+            name: user.username || 'Unnamed',
+            email: user.email || 'No Email',
+            phone: user.phoneNumber || 'N/A',
+            status: user.isActive ? 'active' : 'blocked',
+            courses: [course.title],
+          });
+        } else {
+          const existing = userMap.get(userId);
+          if (!existing.courses.includes(course.title)) {
+            existing.courses.push(course.title);
+          }
+        }
+      });
+    });
+
+    setUsers(Array.from(userMap.values()));
   }, []);
 
-  // ✅ Updated function to refetch user list after status change
   const updateUserStatus = useCallback(
     async (id, data) => {
       try {
         await userToggling(id, data);
         Toast.show({ type: 'success', text1: 'Status updated successfully' });
-
-        // ✅ Reload courses and requests (which sets users again)
         await loadCourses();
       } catch (error) {
-        console.log('The update user status Error', error);
+        console.log('Update user status error', error);
         Toast.show({ type: 'error', text1: 'Failed to update status' });
       }
     },
     [loadCourses]
   );
 
-  // Initial course load
   useEffect(() => {
     loadCourses();
   }, [loadCourses]);
 
-  // Load requests when courses change
   useEffect(() => {
     if (courses.length > 0) {
       loadRequests(courses);
     }
   }, [courses, loadRequests]);
 
-  // Refresh control
   const onRefresh = async () => {
     setRefreshing(true);
     await loadCourses();
     setRefreshing(false);
   };
 
-  // Render each user card
   const renderItem = ({ item }) => (
     <View style={styles.card}>
       <View style={{ flex: 1 }}>
         <Text style={styles.name}>{item.name}</Text>
         <Text style={styles.info}>Email: {item.email}</Text>
         <Text style={styles.info}>Phone: {item.phone}</Text>
-        {/* */}
+        <Text style={styles.info}>
+          Courses: {item.courses?.join(', ') || 'None'}
+        </Text>
       </View>
-       <View style={[styles.statusContainer, {flex: 0.5}]}>
-          <Text
-            style={[
-              styles.statusText,
-              { color: item.status === 'active' ? 'green' : 'red', textAlign: 'center', },
-            ]}
-          >
-            {item.status === 'active' ? 'Active' : 'Blocked'}
-          </Text>
-        </View>
 
-      {/* <TouchableOpacity
+      <View style={[styles.statusContainer, { flex: 0.5 }]}>
+        <Text
+          style={[
+            styles.statusText,
+            {
+              color: item.status === 'active' ? 'green' : 'red',
+              textAlign: 'center',
+            },
+          ]}
+        >
+          {item.status === 'active' ? 'Active' : 'Blocked'}
+        </Text>
+      </View>
+
+      <TouchableOpacity
         onPress={() =>
           updateUserStatus(item.id, {
-            isActive: item.status === 'blocked', // toggle logic
+            isActive: item.status === 'blocked',
           })
         }
         style={[
@@ -166,8 +170,7 @@ const UserList = () => {
           style={{ width: 20, height: 20 }}
           resizeMode="cover"
         />
-      </TouchableOpacity> */}
-
+      </TouchableOpacity>
     </View>
   );
 
@@ -207,20 +210,25 @@ const UserList = () => {
         ))}
       </View>
 
-      {
-        users.length > 0 ? (
-          <FlatList
-            data={filteredUsers}
-            keyExtractor={(item) => item.id}
-            renderItem={renderItem}
-            contentContainerStyle={{ paddingBottom: 20 }}
-          />
-        ) : (
-          <View style={{justifyContent: 'center', alignItems: 'center', width: '100%', minHeight: 200}}>
-            <Text style={{width: '100%', textAlign: 'center'}}>Student Data not found</Text>
-          </View>
-        )
-      }
+      {users.length > 0 ? (
+        <FlatList
+          data={filteredUsers}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          contentContainerStyle={{ paddingBottom: 20 }}
+        />
+      ) : (
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '100%',
+            minHeight: 200,
+          }}
+        >
+          <Text style={{ textAlign: 'center' }}>Student Data not found</Text>
+        </View>
+      )}
     </ScrollView>
   );
 };

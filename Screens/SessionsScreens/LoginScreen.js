@@ -63,23 +63,29 @@ const LoginScreen = ({ route }) => {
   };
 
   return (
-    <View style={styles.container}>
+     <View style={styles.container}>
       <View style={styles.formContainer}>
         <Image
-          source={role === 'Teacher' ? require('../../assets/images/teacher.png') : require('../../assets/images/kadiralogo.png')}
+          source={role === 'Teacher' ? require('../../assets/images/teacher1.png') : require('../../assets/images/Learning-bro.png')}
           style={styles.logoImage}
         />
+
+        {/* Username/Email Label */}
+        <Text style={styles.inputLabel}>Username or Email</Text>
         <TextInput
           style={styles.formView}
-          placeholder="Username or Email"
+          placeholder="Enter Username or Email"
           placeholderTextColor="gray"
           value={username}
           onChangeText={setUsername}
         />
+
+        {/* Password Label */}
+        <Text style={styles.inputLabel}>Password</Text>
         <View style={styles.passwordContainer}>
           <TextInput
             style={styles.passwordInput}
-            placeholder="Password"
+            placeholder="Enter the Password"
             placeholderTextColor="gray"
             secureTextEntry={!showPassword}
             value={password}

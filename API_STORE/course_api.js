@@ -50,3 +50,15 @@ export const GetCourseByID = async (id) => {
     return { success: false, error: error.response?.data?.message || error.message };
   }
 }
+
+export const SubmitRating = async (rating, course_id) => {
+try {
+    const response = await fetchDatas('get', `/courses/${id}`);
+    if (response) {
+      return { success: true, data: response };
+    }
+  } catch (error) {
+    console.error('Error during Approving the user:', error.response?.data?.message || error.message);
+    return { success: false, error: error.response?.data?.message || error.message };
+  }
+}

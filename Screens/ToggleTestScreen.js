@@ -92,7 +92,9 @@ const ToggleTestScreen = () => {
         keyExtractor={(item) => item._id}
         renderItem={renderItem}
         contentContainerStyle={styles.list}
-      />
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>Data requests not found.</Text>
+        } />
     </View>
   );
 };
@@ -143,5 +145,12 @@ const styles = StyleSheet.create({
   },
   switchContainer: {
     alignItems: 'center',
+  },
+  emptyText: {
+    textAlign: 'center',
+    marginTop: 30,
+    color: '#888',
+    fontSize: 16,
+    fontStyle: 'italic',
   },
 });

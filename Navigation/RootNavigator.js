@@ -99,6 +99,10 @@ const TeacherSearchStack = () => {
       <Stack.Screen name="SolutionExplainScreen" component={SolutionExplanationScreen} options={{ title: 'Solution' }} />
       <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} options={{ title: 'Policy' }} />
       <Stack.Screen name="LeaderBoard" component={Leaderboard} options={{ title: 'Ranks' }} />
+      <Stack.Screen name="TeacherLessonHub" component={TeacherLessonHubScreen} options={{ title: 'Lesson Objectives' }} />
+            <Stack.Screen name="ToggleTest" component={ToggleTestScreen} options={{ title: 'Tests' }} />
+
+
     </Stack.Navigator>
   )
 }
@@ -136,7 +140,7 @@ const SearchStack = () => {
       <Stack.Screen name="ComparisonScreen" component={ComparisonScreen} options={{ title: 'Comparison' }} />
       <Stack.Screen name="SolutionScreen" component={SolutionsScreen} options={{ title: 'Solution' }} />
       <Stack.Screen name="SolutionExplainScreen" component={SolutionExplanationScreen} options={{ title: 'Solution' }} />
-      <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} options={{ title: 'Policy' }} />
+      <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} options={{ title: 'Privacy Policy' }} />
       <Stack.Screen name="LeaderBoard" component={Leaderboard} options={{ title: 'Ranks' }} />
     </Stack.Navigator>
   );
@@ -145,9 +149,9 @@ const SearchStack = () => {
 const ProfileStack = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Profile' }} />
+      <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Profile', headerShown: false }} />
       <Stack.Screen name="UserDetails" component={EditProfileScreen} options={{ title: 'Edit Your Profile' }} />
-      <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} options={{ title: 'Policy' }} />
+      <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} options={{ title: 'Privacy Policy' }} />
     </Stack.Navigator>
   );
 };
@@ -249,6 +253,15 @@ const RootNavigator = () => {
                 </Svg>
               );
             }
+
+            if (route.name === 'Profile') {
+            return (
+              <Svg width="20" height="20" fill={fillColor} viewBox="0 0 16 16">
+                <Path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                <Path fillRule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+              </Svg>
+            );
+          }
 
   console.log(authUser);
 

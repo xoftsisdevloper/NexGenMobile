@@ -30,7 +30,9 @@ function MaterialScreen() {
 
   useEffect(() => {
     navigation.setOptions({
-      headerTitle: `${unit.name} - ${unit.content_type}`,
+      headerTitle: `${unit.name.toUpperCase()} - ${unit.content_type.toUpperCase()}`,
+      headerStyle: { backgroundColor: colorPalette.primary },
+      headerTitleStyle: { fontWeight: 'semi-bold' },
     });
   }, [navigation, unit.name]);
 
@@ -76,13 +78,13 @@ function MaterialScreen() {
       <TouchableOpacity onPress={toggleFullscreen} style={styles.fullscreenBtn}>
         <Text style={{ color: 'white', fontWeight: 'bold' }}>
           {fullscreen ? (
-            <Svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#ffffff" class="bi bi-fullscreen-exit" viewBox="0 0 16 16">
-              <Path d="M5.5 0a.5.5 0 0 1 .5.5v4A1.5 1.5 0 0 1 4.5 6h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5m5 0a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 10 4.5v-4a.5.5 0 0 1 .5-.5M0 10.5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 6 11.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5m10 1a1.5 1.5 0 0 1 1.5-1.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0z" />
-            </Svg>
+            <Text style={{ color: 'white', fontWeight: 'bold' }}>
+              Exit Fullscreen
+            </Text>
           ) : (
-            <Svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#ffffff" class="bi bi-fullscreen" viewBox="0 0 16 16">
-              <Path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5M.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5m15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5" />
-            </Svg>
+            <Text style={{ color: 'white', fontWeight: 'bold' }}>
+              Enter Fullscreen
+            </Text>
           )}
         </Text>
       </TouchableOpacity>

@@ -92,6 +92,7 @@ const styles = StyleSheet.create({
   meterialText: {
     fontSize: 18,
     color: colorPalette.black,
+    textTransform: 'capitalize'
   },
   meterialDescription: {
     fontSize: 14,
