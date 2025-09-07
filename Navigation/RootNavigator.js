@@ -171,7 +171,7 @@ const RootNavigator = () => {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
-          let fillColor = focused ? '#0147ab' : 'gray';
+          let fillColor = focused ? '#85db51' : 'gray';
 
           if (route.name === 'Home') {
             return (
@@ -200,7 +200,7 @@ const RootNavigator = () => {
 
           return null;
         },
-        tabBarActiveTintColor: '#0147ab',
+        tabBarActiveTintColor: '#85db51',
         tabBarInactiveTintColor: 'gray',
         headerShown: false,
         tabBarLabelStyle: { fontSize: 12 },
@@ -219,7 +219,7 @@ const RootNavigator = () => {
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
-            let fillColor = focused ? '#0147ab' : 'gray';
+            let fillColor = focused ? '#85db51' : 'gray';
 
             if (route.name === 'Students') {
               return (
@@ -267,7 +267,7 @@ const RootNavigator = () => {
 
             return null;
           },
-          tabBarActiveTintColor: '#0147ab',
+          tabBarActiveTintColor: '#85db51',
           tabBarInactiveTintColor: 'gray',
           headerShown: false,
           tabBarLabelStyle: { fontSize: 12 },

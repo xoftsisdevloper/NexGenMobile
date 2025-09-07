@@ -84,10 +84,10 @@ const ComparisonScreen = () => {
               backgroundGradientFrom: '#fff',
               backgroundGradientTo: '#fff',
               decimalPlaces: 1,
-              color: () => '#0147ab',
+              color: () => '#85db51',
               barPercentage: 1.5,
               barRadius: 5,
-              labelColor: () => '#0147ab',
+              labelColor: () => '#85db51',
               propsForLabels: {
                 fontSize: 12,
                 color: '#fff',

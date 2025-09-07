@@ -47,9 +47,9 @@ function TeacherTab({ courseData, courses }) {
         renderTabBar={(props) => (
           <TabBar
             {...props}
-            indicatorStyle={{ backgroundColor: '#0147ab' }}
+            indicatorStyle={{ backgroundColor: '#85db51' }}
             inactiveColor='#000'
-            activeColor='#0147ab'
+            activeColor='#85db51'
             style={{ backgroundColor: colorPalette.aliceBlue }}
           />
         )}

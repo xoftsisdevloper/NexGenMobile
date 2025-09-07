@@ -34,7 +34,7 @@ export const CourseCard = ({ course, showType = 'normal', courses }) => {
     switch (showType) {
         case 'fullBlock':
             content = (
-                <View style={[{ flexDirection: 'row', gap: course.isPending ? 0 : 3, }]}>
+                <View style={[{ flexDirection: 'row', gap: course.isPending ? 0 : 3 }]}>
                     <View style={[CourseCardFullBlock.cardContent]}>
                         <Text style={CourseCardFullBlock.cardTitle}>{course.name}</Text>
                         <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', columnGap: 5, flexWrap: 'wrap' }}>

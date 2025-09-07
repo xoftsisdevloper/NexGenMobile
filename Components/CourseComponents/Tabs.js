@@ -37,7 +37,7 @@ function TabViewExample({ courseData, courses }) {
   }, []); 
 
   return (
-    <View style={{ flex: 1 }}> {/* Ensure the TabView has enough space */}
+    <View style={{ flex: 1, backgroundColor: '#fff' }}> {/* Ensure the TabView has enough space */}
       <TabView
         navigationState={{ index, routes }}
         renderScene={renderScene}
@@ -46,9 +46,9 @@ function TabViewExample({ courseData, courses }) {
         renderTabBar={(props) => (
           <TabBar
             {...props}
-            indicatorStyle={{ backgroundColor: '#0147ab' }}
+            indicatorStyle={{ backgroundColor: '#85db51' }}
             inactiveColor='#000'
-            activeColor='#0147ab'
+            activeColor='#85db51'
             style={{ backgroundColor: colorPalette.aliceBlue }}
           />
         )}

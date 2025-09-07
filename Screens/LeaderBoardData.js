@@ -120,9 +120,9 @@ const LeaderboardSummary = () => {
                             {currentUser && (
                                 <View style={[styles.card, styles.currentUserCard]}>
                                     <Text style={styles.title}>You</Text>
-                                    <TrophySVG value={currentUser.rank} size={100} color={"#0147ab"} />
-                                    <Text style={[styles.info, { backgroundColor: '#0147ab' }]}>Rank: {currentUser.rank}</Text>
-                                    <Text style={[styles.info, { backgroundColor: '#0147ab' }]}>Score: {currentUser.score}</Text>
+                                    <TrophySVG value={currentUser.rank} size={100} color={"#85db51"} />
+                                    <Text style={[styles.info, { backgroundColor: '#85db51' }]}>Rank: {currentUser.rank}</Text>
+                                    <Text style={[styles.info, { backgroundColor: '#85db51' }]}>Score: {currentUser.score}</Text>
                                 </View>
                             )}
                         </View>
@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center', alignItems: 'center'
     },
     testButtonSelected: {
-        backgroundColor: '#0147ab'
+        backgroundColor: '#85db51'
     },
     testButtonText: {
         color: '#fff',

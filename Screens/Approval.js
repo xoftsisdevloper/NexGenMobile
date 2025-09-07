@@ -81,7 +81,7 @@ const Approvals = () => {
 
   const renderCourseList = () => {
     if (isLoading) {
-      return <ActivityIndicator size="large" color="#0147ab" />;
+      return <ActivityIndicator size="large" color="#85db51" />;
     }
 
     if (!courses?.length) {
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   loginText: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#0147ab',
+    color: '#85db51',
   },
   headingContainer: {
     flexDirection: 'row',
@@ -157,13 +157,13 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   joinButton: {
-    backgroundColor: '#0147ab',
+    backgroundColor: '#85db51',
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 8,
   },
   btnText: {
-    color: '#0147ab',
+    color: '#85db51',
     fontWeight: '700',
   },
   centeredView: {

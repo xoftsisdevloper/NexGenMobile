@@ -69,7 +69,7 @@ const ProfileScreen = () => {
       <View style={{marginTop: 20}} >
         <TouchableOpacity onPress={handleUserDetails}>
           <View style={[styles.optionRow, { flexDirection: 'column' }]}>
-            <Image source={require('../assets/images/d-user.png')} style={styles.logo} />
+            <Image source={require('../assets/images/macelogo1.png')} style={styles.logo} />
             <Text style={[styles.optionText, { fontSize: 25 }]}>{authUser ? `${authUser.username} ` : "User Details"}{SvgIcons.edit_Icons}
             </Text>
 
@@ -115,7 +115,7 @@ const ProfileScreen = () => {
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.versionText}>Version 1.8.1</Text>
+      <Text style={styles.versionText}>Version 2.0</Text>
     </View>
   );
 };
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 100,
     marginBottom: 0,
-    resizeMode: 'contain'
+    resizeMode: 'contain',
   },
   optionsContainer: {
     backgroundColor: 'white',

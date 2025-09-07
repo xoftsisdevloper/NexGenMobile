@@ -23,7 +23,7 @@ import { fetchCourses, AddJoinCodeRequest } from '../API_STORE/course_api';
 import { useAuth } from '../Navigation/AuthContext';
 import CourseCard from '../Components/CourseComponents/CourseCard';
 import { homeStyle } from '../assets/styles/Styles';
-import logo from '../assets/images/Nexgen.png';
+import logo from '../assets/images/macelogo.png';
 import { colorPalette } from '../assets/styles/Colors';
 import { useNavigation } from '@react-navigation/native';
 
@@ -47,18 +47,27 @@ const TeacherHomeScreen = () => {
   const navigator = useNavigation();
   const userId = authUser?._id;
 
-  const loadCourses = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const result = await fetchCourses();
-      const teacherCourses = result.filter(f => f.created_by === userId);
-      setCourses(teacherCourses || []);
-    } catch (err) {
-      console.error('Failed to fetch courses:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [userId]);
+const loadCourses = useCallback(async () => {
+  try {
+    setIsLoading(true);
+    const result = await fetchCourses();
+
+    const allowedCourseIds = new Set(authUser?.institution?.course_access || []);
+    const courseMap = new Map();
+
+    result.forEach(c => {
+      if (c.created_by === userId || allowedCourseIds.has(c._id)) {
+        courseMap.set(c._id, c); // Ensures uniqueness
+      }
+    });
+
+    setCourses(Array.from(courseMap.values()));
+  } catch (err) {
+    console.error('Failed to fetch courses:', err);
+  } finally {
+    setIsLoading(false);
+  }
+}, [userId, authUser]);
 
   useEffect(() => {
     loadCourses();
@@ -125,7 +134,7 @@ const TeacherHomeScreen = () => {
 
   const renderCourseList = () => {
     if (isLoading) {
-      return <ActivityIndicator size="large" color="#0147ab" />;
+      return <ActivityIndicator size="large" color="#85db51" />;
     }
 
     if (!filteredCourses?.length) {
@@ -155,19 +164,10 @@ const TeacherHomeScreen = () => {
               <Image source={logo} style={styles.logo} />
             </View>
             <TouchableOpacity style={styles.searchContainer} onPress={() => navigator.navigate('Profile')}>
-              <Svg width={30} height={30} viewBox="0 0 32 32" fill="none">
-                <Path
-                  d="M16 16c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm0 2c-4.418 0-13 2.239-13 6.667V30h26v-5.333C29 20.239 20.418 18 16 18z"
-                  fill="#0147AB"
-                  opacity={0.15}
-                />
-                <Path
-                  d="M16 15c3.314 0 6-2.686 6-6s-2.686-6-6-6-6 2.686-6 6 2.686 6 6 6zm0 2c-4.418 0-12 2.239-12 6.667V29h24v-5.333C28 19.239 20.418 17 16 17z"
-                  stroke="#0147AB"
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
+              <Svg xmlns="http://www.w3.org/2000/svg" width={40} height={40} viewBox="0 0 24 24" fill="none">
+                <Path opacity="0.4" d="M12 22.01C17.5228 22.01 22 17.5329 22 12.01C22 6.48716 17.5228 2.01001 12 2.01001C6.47715 2.01001 2 6.48716 2 12.01C2 17.5329 6.47715 22.01 12 22.01Z" fill="#fff" />
+                <Path d="M12 6.93994C9.93 6.93994 8.25 8.61994 8.25 10.6899C8.25 12.7199 9.84 14.3699 11.95 14.4299C11.98 14.4299 12.02 14.4299 12.04 14.4299C12.06 14.4299 12.09 14.4299 12.11 14.4299C12.12 14.4299 12.13 14.4299 12.13 14.4299C14.15 14.3599 15.74 12.7199 15.75 10.6899C15.75 8.61994 14.07 6.93994 12 6.93994Z" fill="#fff" />
+                <Path d="M18.7807 19.36C17.0007 21 14.6207 22.01 12.0007 22.01C9.3807 22.01 7.0007 21 5.2207 19.36C5.4607 18.45 6.1107 17.62 7.0607 16.98C9.7907 15.16 14.2307 15.16 16.9407 16.98C17.9007 17.62 18.5407 18.45 18.7807 19.36Z" fill="#fff" />
               </Svg>
               <Text style={styles.loginText}>Hi, {getFirstName(authUser?.username)}</Text>
             </TouchableOpacity>
@@ -215,20 +215,27 @@ const TeacherHomeScreen = () => {
 
 const styles = StyleSheet.create({
   containerParent: {
-    backgroundColor: '#ffffff',
-    paddingHorizontal: 10,
-    height: 80,
+    backgroundColor: '#85db51',
+    padding: 10,
+    height: 100,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    borderBottomRightRadius: 30,
+    borderBottomLeftRadius: 30,
   },
   container: {
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'flex-start'
+
   },
   logo: {
     width: 180,
     height: '100%',
     resizeMode: 'contain',
     marginRight: 5,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start'
   },
   searchContainer: {
     alignSelf: 'center',
@@ -239,7 +246,7 @@ const styles = StyleSheet.create({
   loginText: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#000',
+    color: '#ffffffff',
   },
   headingContainer: {
     flexDirection: 'column',
@@ -257,13 +264,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#0147ab',
+    borderColor: '#85db51',
   },
   activeFilter: {
-    backgroundColor: '#0147ab',
+    backgroundColor: '#85db51',
   },
   filterText: {
-    color: '#0147ab',
+    color: '#85db51',
     fontWeight: '600',
     fontSize: 14,
   },

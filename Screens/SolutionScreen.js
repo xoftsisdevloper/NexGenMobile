@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   questionText: { fontWeight: 'bold', fontSize: 14, marginBottom: 8 },
   optionText: { fontSize: 13, paddingLeft: 5, marginBottom: 4, fontWeight: '700' },
   backButton: {
-    backgroundColor: '#0147ab',
+    backgroundColor: '#85db51',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   tabItem: { alignItems: 'center' },
-  tabText: { fontSize: 12, lineHeight: 20, marginBottom: 5, fontWeight: '700', color: '#0147ab' },
+  tabText: { fontSize: 12, lineHeight: 20, marginBottom: 5, fontWeight: '700', color: '#85db51' },
 });
 
 export default SolutionsScreen;

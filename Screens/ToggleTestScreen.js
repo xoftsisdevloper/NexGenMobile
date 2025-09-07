@@ -79,7 +79,7 @@ const ToggleTestScreen = () => {
             })
           }
           trackColor={{ false: '#767577', true: '#81b0ff' }}
-          thumbColor={item.test_status === 'enabled' ? '#0147ab' : '#f4f3f4'}
+          thumbColor={item.test_status === 'enabled' ? '#85db51' : '#f4f3f4'}
         />
       </View>
     </View>
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
   testName: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#0147ab',
+    color: '#85db51',
     marginBottom: 8,
   },
   detailRow: {

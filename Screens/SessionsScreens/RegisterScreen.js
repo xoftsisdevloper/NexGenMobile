@@ -341,7 +341,7 @@ const RegisterScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#0147ab',
+    backgroundColor: '#85db51',
     padding: 20,
     justifyContent: 'center',
   },
@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   showHideText: {
-    color: '#007bff',
+    color: '#85db51',
     fontWeight: 'bold',
   },
   buttonRow: {
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   backButton: {
-    backgroundColor: colorPalette.aliceBlue,
+    backgroundColor: colorPalette.transBlue,
     padding: 12,
     borderRadius: 5,
     flex: 1,
@@ -403,11 +403,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   backButtonText: {
-    color: '#0147ab',
+    color: '#85db51',
     fontWeight: 'bold',
   },
   registerButton: {
-    backgroundColor: colorPalette.primary || '#007bff',
+    backgroundColor: colorPalette.blue || '#007bff',
     padding: 12,
     borderRadius: 5,
     flex: 1,
@@ -431,7 +431,7 @@ const styles = StyleSheet.create({
   },
   loginText: {
     fontSize: 16,
-    color: colorPalette.primary || '#007bff',
+    color: colorPalette.white,
     marginLeft: 5,
     fontWeight: 'bold',
   },

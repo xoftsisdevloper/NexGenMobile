@@ -3,28 +3,28 @@ import React from 'react'
 import { G, Path, Svg } from 'react-native-svg'
 
 const SvgIcons = {
-    profile: (< Svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill='#0147ab' class="bi bi-person-circle" viewBox="0 0 16 16" >
+    profile: (< Svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill='#85db51' class="bi bi-person-circle" viewBox="0 0 16 16" >
         <Path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
         <Path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
     </ Svg >),
 
-    search: (<Svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill='#0147ab' class="bi bi-search" viewBox="0 0 16 16">
+    search: (<Svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill='#85db51' class="bi bi-search" viewBox="0 0 16 16">
         <Path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
     </Svg>),
 
     course: (
-        <Svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill='#0147ab' class="bi bi-book-half" viewBox="0 0 16 16">
+        <Svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill='#85db51' class="bi bi-book-half" viewBox="0 0 16 16">
             <Path d="M8.5 2.687c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783" />
         </Svg>
     ),
 
     subjects: (
-        <Svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#0147ab" class="bi bi-alarm-fill" viewBox="0 0 16 16" style={{ marginRight: 5 }}>
+        <Svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#85db51" class="bi bi-alarm-fill" viewBox="0 0 16 16" style={{ marginRight: 5 }}>
             <Path d="M6 .5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1H9v1.07a7.001 7.001 0 0 1 3.274 12.474l.601.602a.5.5 0 0 1-.707.708l-.746-.746A6.97 6.97 0 0 1 8 16a6.97 6.97 0 0 1-3.422-.892l-.746.746a.5.5 0 0 1-.707-.708l.602-.602A7.001 7.001 0 0 1 7 2.07V1h-.5A.5.5 0 0 1 6 .5m2.5 5a.5.5 0 0 0-1 0v3.362l-1.429 2.38a.5.5 0 1 0 .858.515l1.5-2.5A.5.5 0 0 0 8.5 9zM.86 5.387A2.5 2.5 0 1 1 4.387 1.86 8.04 8.04 0 0 0 .86 5.387M11.613 1.86a2.5 2.5 0 1 1 3.527 3.527 8.04 8.04 0 0 0-3.527-3.527" />
         </Svg>),
 
     duration: (
-        <Svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#0147ab" class="bi bi-book-half" viewBox="0 0 16 16" style={{ marginRight: 5 }}>
+        <Svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#85db51" class="bi bi-book-half" viewBox="0 0 16 16" style={{ marginRight: 5 }}>
             <Path d="M8.5 2.687c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783" />
         </Svg>),
 
@@ -46,7 +46,7 @@ const SvgIcons = {
         </Svg>
     ),
 
-    profileLarge: (< Svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill='#0147ab' class="bi bi-person-circle" viewBox="0 0 16 16" >
+    profileLarge: (< Svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill='#85db51' class="bi bi-person-circle" viewBox="0 0 16 16" >
         <Path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
         <Path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
     </ Svg >),
@@ -60,19 +60,19 @@ const SvgIcons = {
         ),
 
     filterIcon: (
-        <Svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#0147ab" class="bi bi-funnel-fill" viewBox="0 0 16 16" >
+        <Svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#85db51" class="bi bi-funnel-fill" viewBox="0 0 16 16" >
             <Path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5z" />
         </Svg >
     ),
 
     videoIcons: (
-        <Svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#0147ab" class="bi bi-play-circle-fill" viewBox="0 0 16 16">
+        <Svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#85db51" class="bi bi-play-circle-fill" viewBox="0 0 16 16">
             <Path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M6.79 5.093A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407l3.5-2.5a.5.5 0 0 0 0-.814z" />
         </Svg>
     ),
 
     pdfIcon: (
-        <Svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#0147ab" class="bi bi-file-earmark-pdf-fill" viewBox="0 0 16 16">
+        <Svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#85db51" class="bi bi-file-earmark-pdf-fill" viewBox="0 0 16 16">
             <Path d="M5.523 12.424q.21-.124.459-.238a8 8 0 0 1-.45.606c-.28.337-.498.516-.635.572l-.035.012a.3.3 0 0 1-.026-.044c-.056-.11-.054-.216.04-.36.106-.165.319-.354.647-.548m2.455-1.647q-.178.037-.356.078a21 21 0 0 0 .5-1.05 12 12 0 0 0 .51.858q-.326.048-.654.114m2.525.939a4 4 0 0 1-.435-.41q.344.007.612.054c.317.057.466.147.518.209a.1.1 0 0 1 .026.064.44.44 0 0 1-.06.2.3.3 0 0 1-.094.124.1.1 0 0 1-.069.015c-.09-.003-.258-.066-.498-.256M8.278 6.97c-.04.244-.108.524-.2.829a5 5 0 0 1-.089-.346c-.076-.353-.087-.63-.046-.822.038-.177.11-.248.196-.283a.5.5 0 0 1 .145-.04c.013.03.028.092.032.198q.008.183-.038.465z" />
             <Path fill-rule="evenodd" d="M4 0h5.293A1 1 0 0 1 10 .293L13.707 4a1 1 0 0 1 .293.707V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2m5.5 1.5v2a1 1 0 0 0 1 1h2zM4.165 13.668c.09.18.23.343.438.419.207.075.412.04.58-.03.318-.13.635-.436.926-.786.333-.401.683-.927 1.021-1.51a11.7 11.7 0 0 1 1.997-.406c.3.383.61.713.91.95.28.22.603.403.934.417a.86.86 0 0 0 .51-.138c.155-.101.27-.247.354-.416.09-.181.145-.37.138-.563a.84.84 0 0 0-.2-.518c-.226-.27-.596-.4-.96-.465a5.8 5.8 0 0 0-1.335-.05 11 11 0 0 1-.98-1.686c.25-.66.437-1.284.52-1.794.036-.218.055-.426.048-.614a1.24 1.24 0 0 0-.127-.538.7.7 0 0 0-.477-.365c-.202-.043-.41 0-.601.077-.377.15-.576.47-.651.823-.073.34-.04.736.046 1.136.088.406.238.848.43 1.295a20 20 0 0 1-1.062 2.227 7.7 7.7 0 0 0-1.482.645c-.37.22-.699.48-.897.787-.21.326-.275.714-.08 1.103" />
         </Svg>
@@ -97,7 +97,7 @@ const SvgIcons = {
     ),
 
     lock: (
-        <Svg xmlns="http://www.w3.org/2000/svg" width="30" height="20" fill="#0147ab" class="bi bi-lock-fill" viewBox="0 0 16 16">
+        <Svg xmlns="http://www.w3.org/2000/svg" width="30" height="20" fill="#85db51" class="bi bi-lock-fill" viewBox="0 0 16 16">
   <Path fill-rule="evenodd" d="M8 0a4 4 0 0 1 4 4v2.05a2.5 2.5 0 0 1 2 2.45v5a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 2 13.5v-5a2.5 2.5 0 0 1 2-2.45V4a4 4 0 0 1 4-4m0 1a3 3 0 0 0-3 3v2h6V4a3 3 0 0 0-3-3"/>
 </Svg>
     )

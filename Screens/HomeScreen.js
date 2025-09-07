@@ -12,7 +12,6 @@ import { useAuth } from '../Navigation/AuthContext';
 import { fetchCourses, AddJoinCodeRequest } from '../API_STORE/course_api';
 import CourseCard from '../Components/CourseComponents/CourseCard';
 import Toast from 'react-native-toast-message';
-import logo from '../assets/images/Nexgen.png';
 import { homeStyle } from '../assets/styles/Styles';
 import { colorPalette } from '../assets/styles/Colors';
 
@@ -30,6 +29,7 @@ const HomeScreen = () => {
   const { authUser } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
 
+  // Fetch courses
   const fetchData = async () => {
     try {
       const fetchedCourses = await fetchCourses();
@@ -45,37 +45,34 @@ const HomeScreen = () => {
     fetchData();
   }, []);
 
+  // Refresh handler
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchData();
     setRefreshing(false);
   };
 
+  // Filter data into general, pending, and approved sets
   useEffect(() => {
-    const generalCourses = courses.filter(course =>
-      course.course_type?.toLowerCase() === 'general'
-    ).map(course => ({
-      ...course,
-      isPending: false,
-    }));
+    const generalCourses = courses
+      .filter(course => course.course_type?.toLowerCase() === 'general')
+      .map(course => ({ ...course, isPending: false }));
 
-    const pendingCourses = courses.filter(course =>
-      course.joinRequests?.some(request =>
-        request.user._id === authUser._id && request.status === 'pending'
-      ) && course.course_type !== 'general'
-    ).map(course => ({
-      ...course,
-      isPending: true,
-    }));
+    const pendingCourses = courses
+      .filter(course =>
+        course.joinRequests?.some(request =>
+          request.user._id === authUser._id && request.status === 'pending'
+        ) && course.course_type !== 'general'
+      )
+      .map(course => ({ ...course, isPending: true }));
 
-    const approvedCourses = courses.filter(course =>
-      course.joinRequests?.some(request =>
-        request.user._id === authUser._id && request.status === 'approved'
-      ) && course.course_type !== 'general'
-    ).map(course => ({
-      ...course,
-      isPending: false,
-    }));
+    const approvedCourses = courses
+      .filter(course =>
+        course.joinRequests?.some(request =>
+          request.user._id === authUser._id && request.status === 'approved'
+        ) && course.course_type !== 'general'
+      )
+      .map(course => ({ ...course, isPending: false }));
 
     const all = [...generalCourses];
     pendingCourses.forEach(c => {
@@ -88,6 +85,7 @@ const HomeScreen = () => {
     setFreeCoursesData(all);
   }, [courses, authUser]);
 
+  // Update filtered courses when type changes
   useEffect(() => {
     if (selectedType === 'all') {
       setFilteredCourses([...freeCoursesData]);
@@ -100,11 +98,12 @@ const HomeScreen = () => {
     }
   }, [selectedType, freeCoursesData]);
 
+  // Handle join code submission
   const handleJoinCode = async () => {
     try {
       const response = await AddJoinCodeRequest({
         joinCode: joincode,
-        userId: authUser?._id
+        userId: authUser?._id,
       });
 
       if (response.success) {
@@ -136,27 +135,61 @@ const HomeScreen = () => {
 
   const openModal = () => setJoinCodeModal(true);
 
+  // Get course count for badges
+  const getCourseCountByType = (type) => {
+    if (type === 'all') return freeCoursesData.length;
+    return freeCoursesData.filter(course => course.course_type?.toLowerCase() === type).length;
+  };
+
+  // Render course filters
   const renderCourseFilters = () => (
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
-      style={{ marginTop: 20 }}
+      style={{ marginTop: 10, paddingTop: 10, width: '95%', margin: 'auto' }}
       contentContainerStyle={styles.filterRow}
     >
-      {courseTypes?.map(type => (
-        <TouchableOpacity
-          key={type}
-          style={[
-            styles.filterButton,
-            selectedType === type && styles.activeFilter
-          ]}
-          onPress={() => setSelectedType(type)}
-        >
-          <Text style={styles.filterText}>
-            {type?.charAt(0)?.toUpperCase() + type?.slice(1)}
-          </Text>
-        </TouchableOpacity>
-      ))}
+      {courseTypes.map(type => {
+        const count = getCourseCountByType(type);
+        const isActive = selectedType === type;
+
+        return (
+          <TouchableOpacity
+            key={type}
+            style={[
+              styles.filterButton,
+              isActive ? styles.activeFilter : styles.inactiveFilter,
+            ]}
+            onPress={() => setSelectedType(type)}
+          >
+            <Text
+              style={[
+                styles.filterText,
+                isActive ? styles.activeFilterText : styles.inactiveFilterText,
+              ]}
+            >
+              {type.charAt(0).toUpperCase() + type.slice(1)}
+            </Text>
+
+            {/* Badge */}
+            <View
+              style={[
+                styles.badge,
+                isActive ? styles.activeBadge : styles.inactiveBadge,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.badgeText,
+                  isActive ? styles.activeBadgeText : styles.inactiveBadgeText,
+                ]}
+              >
+                {count}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        );
+      })}
     </ScrollView>
   );
 
@@ -169,69 +202,77 @@ const HomeScreen = () => {
   return (
     <SafeAreaView style={homeStyle.screenBg}>
       <ScrollView
-        contentContainerStyle={homeStyle.scrollViewContent}
+        contentContainerStyle={{ paddingBottom: 100 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         {/* Header */}
         <View style={styles.containerParent}>
-          <Image source={logo} style={styles.logo} />
-          <TouchableOpacity style={styles.searchContainer} onPress={() => navigator.navigate('Profile')}>
-            <Svg width={30} height={30} viewBox="0 0 32 32" fill="none">
-              <Path
-                d="M16 16c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm0 2c-4.418 0-13 2.239-13 6.667V30h26v-5.333C29 20.239 20.418 18 16 18z"
-                fill="#0147AB"
-                opacity={0.15}
-              />
-              <Path
-                d="M16 15c3.314 0 6-2.686 6-6s-2.686-6-6-6-6 2.686-6 6 2.686 6 6 6zm0 2c-4.418 0-12 2.239-12 6.667V29h24v-5.333C28 19.239 20.418 17 16 17z"
-                stroke="#0147AB"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+          <Text style={styles.loginText}>Hi, {getFirstName(authUser?.username)}</Text>
+          <TouchableOpacity
+            style={styles.searchContainer}
+            onPress={() => navigator.navigate('Profile')}
+          >
+            <Svg xmlns="http://www.w3.org/2000/svg" width={50} height={50} viewBox="0 0 24 24" fill="none">
+              <Path opacity="0.4" d="M12 22.01C17.5228 22.01 22 17.5329 22 12.01C22 6.48716 17.5228 2.01001 12 2.01001C6.47715 2.01001 2 6.48716 2 12.01C2 17.5329 6.47715 22.01 12 22.01Z" fill="#fff" />
+              <Path d="M12 6.93994C9.93 6.93994 8.25 8.61994 8.25 10.6899C8.25 12.7199 9.84 14.3699 11.95 14.4299C11.98 14.4299 12.02 14.4299 12.04 14.4299C12.06 14.4299 12.09 14.4299 12.11 14.4299C12.12 14.4299 12.13 14.4299 12.13 14.4299C14.15 14.3599 15.74 12.7199 15.75 10.6899C15.75 8.61994 14.07 6.93994 12 6.93994Z" fill="#fff" />
+              <Path d="M18.7807 19.36C17.0007 21 14.6207 22.01 12.0007 22.01C9.3807 22.01 7.0007 21 5.2207 19.36C5.4607 18.45 6.1107 17.62 7.0607 16.98C9.7907 15.16 14.2307 15.16 16.9407 16.98C17.9007 17.62 18.5407 18.45 18.7807 19.36Z" fill="#fff" />
             </Svg>
-            <Text style={styles.loginText}>Hi, {getFirstName(authUser?.username) }</Text>
+          <Text style={{fontSize: 20, color: '#fff', fontWeight: '700' }}>Profile</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Title + Join Button */}
-        <View style={styles.headingContainer}>
-          <Text style={[homeStyle.titleText, { marginBottom: 0 }]}>Explore Courses</Text>
-          <TouchableOpacity style={styles.joinButton} onPress={openModal}>
-            <Text style={styles.btnText}>Join code</Text>
-          </TouchableOpacity>
-        </View>
+        {/* White Curved Background with Content */}
+        <View style={styles.curve}>
+          <View style={styles.headingContainer}>
+            <Text style={[homeStyle.titleText, { marginBottom: 0 }]}>Courses</Text>
+          </View>
 
-        {renderCourseFilters()}
+          {renderCourseFilters()}
 
-        {/* Course List */}
-        <View style={{ marginTop: 0, paddingHorizontal: 14 }}>
-          {isLoading ? (
-            <ActivityIndicator size="large" color="#0000ff" />
-          ) : (
-            <FlatList
-              data={[...filteredCourses].reverse()}
-              keyExtractor={(item) => item._id}
-              renderItem={({ item }) => (
-                <CourseCard course={item} courses={courses} showType="fullBlock" />
-              )}
-              ListEmptyComponent={() => (
-                <Text style={{ textAlign: 'center', marginTop: 20 }}>Course Not Found</Text>
-              )}
-            />
-          )}
+          <View style={{ marginTop: 0, paddingHorizontal: 14 }}>
+            {isLoading ? (
+              <ActivityIndicator size="large" color="#0000ff" />
+            ) : filteredCourses.length > 0 ? (
+              filteredCourses
+                .slice()
+                .reverse()
+                .map((item) => (
+                  <CourseCard
+                    key={item._id}
+                    course={item}
+                    courses={courses}
+                    showType="fullBlock"
+                  />
+                ))
+            ) : (
+              <Text style={{ textAlign: 'center', marginTop: 40, fontSize: 16, color: '#888' }}>
+                No {selectedType.charAt(0).toUpperCase() + selectedType.slice(1)} Courses Found
+              </Text>
+            )}
+          </View>
         </View>
       </ScrollView>
+
+      {/* Floating Join Button */}
+      <TouchableOpacity style={styles.joinButton} onPress={openModal}>
+        <Text style={styles.jbtnText}>+</Text>
+      </TouchableOpacity>
 
       {/* Join Code Modal */}
       <Modal animationType="fade" transparent visible={joinCodeModal}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <TouchableOpacity style={[styles.button, styles.buttonClose]} onPress={onClose}>
-              <Image source={require('../assets/images/cancel.png')} style={styles.cancelImage} />
+              <Image
+                source={require('../assets/images/cancel.png')}
+                style={styles.cancelImage}
+              />
             </TouchableOpacity>
             <View style={styles.codeForm}>
-              <Image source={require('../assets/images/joincode.png')} style={styles.joincodeImage} />
+              <Image
+                source={require('../assets/images/joincode.png')}
+                style={styles.joincodeImage}
+              />
               <TextInput
                 placeholder="Enter the code to join"
                 style={styles.formInput}
@@ -247,56 +288,62 @@ const HomeScreen = () => {
       </Modal>
     </SafeAreaView>
   );
+
 };
 
 const styles = StyleSheet.create({
   containerParent: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#85db51',
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    paddingVertical: 30,
+    height: 130,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    cursor: 'pointer'
   },
   loginText: {
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: 25,
+    fontWeight: '700',
     textTransform: 'capitalize',
-    color: '#0147AB',
-  },
-  logo: {
-    width: 160,
-    height: 50,
-    resizeMode: 'contain',
+    color: '#ffffff',
   },
   headingContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 15,
-    alignItems: 'center',
-    marginTop: 10,
+    paddingHorizontal: 20,
+    marginVertical: 0,
   },
   joinButton: {
-    backgroundColor: '#0147ab',
-    width: 100,
-    height: 40,
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    backgroundColor: '#85db51',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 5,
+  },
+  jbtnText: {
+    color: '#fff',
+    fontSize: 28,
+    fontWeight: 'bold',
+    lineHeight: 30,
   },
   btnText: {
     color: '#fff',
-    fontWeight: '700',
+    fontWeight: 'bold',
   },
   filterRow: {
-    flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
     gap: 8,
@@ -305,15 +352,60 @@ const styles = StyleSheet.create({
   filterButton: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    backgroundColor: '#ddd',
     borderRadius: 20,
+    marginHorizontal: 5,
+    position: 'relative',
+    minWidth: 70,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  inactiveFilter: {
+    backgroundColor: '#85db51',
   },
   activeFilter: {
-    backgroundColor: '#0147ab',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#85db51',
   },
-  filterText: {
+  inactiveFilterText: {
     color: '#fff',
     fontWeight: '600',
+  },
+  activeFilterText: {
+    color: '#85db51',
+    fontWeight: '600',
+  },
+  badge: {
+    position: 'absolute',
+    top: -6,
+    right: -6,
+    minWidth: 20,
+    height: 20,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 5,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1,
+  },
+  inactiveBadge: {
+    backgroundColor: '#fff',
+  },
+  activeBadge: {
+    backgroundColor: '#85db51',
+  },
+  inactiveBadgeText: {
+    color: '#85db51',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  activeBadgeText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   centeredView: {
     flex: 1,
@@ -342,11 +434,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   formInput: {
-    borderWidth: 1,
     width: 280,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginVertical: 10,
+    paddingVertical: 10,
+    marginVertical: 12,
+    fontSize: 16,
+    color: '#333',
+    borderBottomWidth: 1,
+    borderBottomColor: '#85db51',
   },
   submitButton: {
     backgroundColor: colorPalette.blue,
@@ -361,6 +455,52 @@ const styles = StyleSheet.create({
     height: 150,
     resizeMode: 'center',
   },
+  curve: {
+    width: '100%',
+    backgroundColor: '#ffffffff',
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
+    paddingTop: 20,
+    marginTop: -40,
+    zIndex: 1,
+  },
+
+  filterRow: {
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 15,
+    paddingRight: 20, // 👈 ensures last item isn't cut off
+  },
+
+  filterButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 20,
+    marginHorizontal: 5,
+    position: 'relative',
+    minWidth: 80,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  badge: {
+    position: 'absolute',
+    top: -6,
+    right: -10,
+    minWidth: 20,
+    height: 20,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 5,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1,
+  },
+
 });
 
 export default HomeScreen;

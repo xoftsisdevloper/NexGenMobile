@@ -506,7 +506,7 @@ const TestScreen = () => {
                                 <Image source={require('../assets/images/already.jpg')} style={{ width: 150, height: 150, resizeMode: 'center' }} />
                             </View>
                             <View>
-                                <Text style={{ width: '200', fontSize: 18, color: '#0147ab', marginVertical: 10 }}>
+                                <Text style={{ width: '200', fontSize: 18, color: '#85db51', marginVertical: 10 }}>
                                     You already taken Test
                                 </Text>
                             </View>

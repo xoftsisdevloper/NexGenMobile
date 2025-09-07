@@ -96,18 +96,27 @@ function MaterialScreen() {
       {unit.content_type.toLowerCase() === 'video' ? (
         <>
           {!fullscreen ? (
-            <View style={{ width: '100%', height: videoHeight }}>{renderVideoPlayer()}</View>
+           <View style={{ width: '100%', height: videoHeight }}>
+                {renderVideoPlayer()}
+              </View>
+
           ) : (
             <Modal visible={true} supportedOrientations={['landscape']} animationType="fade">
               <View style={{ flex: 1, backgroundColor: 'black' }}>{renderVideoPlayer()}</View>
             </Modal>
           )}
+
+          <View style={{padding: 10}}>
+            <Text style={{fontSize: 20, fontWeight: '700', marginBottom: 20}}>{unit.name} - {unit.content_type}</Text>
+            <Text style={{fontSize: 16, fontWeight: '400'}}>{unit.description}</Text>
+          </View>
         </>
       ) : (
         <View style={{ width: '100%', height: pdfHeight }}>
           <WebView source={{ uri: unit.content_url }} style={{ flex: 1 }} />
         </View>
       )}
+
     </View>
   );
 }

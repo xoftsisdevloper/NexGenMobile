@@ -66,7 +66,7 @@ const LoginScreen = ({ route }) => {
      <View style={styles.container}>
       <View style={styles.formContainer}>
         <Image
-          source={role === 'Teacher' ? require('../../assets/images/teacher1.png') : require('../../assets/images/Learning-bro.png')}
+          source={role === 'Teacher' ? require('../../assets/images/teacher_img.jpg') : require('../../assets/images/student_img.jpg')}
           style={styles.logoImage}
         />
 
@@ -123,7 +123,7 @@ const LoginScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0147ab',
+    backgroundColor: '#85db51',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
@@ -168,12 +168,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   showHideText: {
-    color: '#0147ab',
+    color: '#85db51',
     fontWeight: 'bold',
   },
   loginButton: {
     flex: 1,
-  backgroundColor: '#0147ab',
+  backgroundColor: '#85db51',
   padding: 12,
   marginLeft: 10,
   borderRadius: 8,
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   signUpText: {
-    color: colorPalette.electricBlue,
+    color: colorPalette.white,
     fontWeight: 'bold',
     fontSize: 14,
   },
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
   },
  backButton: {
     flex: 1,
-    backgroundColor: colorPalette.aliceBlue,
+    backgroundColor: colorPalette.transBlue,
     padding: 12,
     marginRight: 10,
     borderRadius: 8,
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
   },
 
   backButtonText: {
-    color: '#0147ab',
+    color: '#85db51',
     fontWeight: 'bold',
   },
 

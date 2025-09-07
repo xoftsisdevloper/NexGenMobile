@@ -14,7 +14,7 @@ const LessonPlan = () => {
             {/* <View >
                 <Text style={styles.sectionTitle}>Lesson Objectives</Text>
             </View> */}
-            <View >
+            <View style={{justifyContent: 'flex-start', flexDirection: 'row'}}>
 
                 <RenderHTML
                     contentWidth={100}
@@ -44,7 +44,8 @@ const styles = StyleSheet.create({
     sectionContent: {
         paddingHorizontal: 10,
         fontSize: 18,
-        textTransform: 'capitalize'
+        textTransform: 'capitalize',
+        textAlign: 'left'
     }
 })
 export default LessonPlan

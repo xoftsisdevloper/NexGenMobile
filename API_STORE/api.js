@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 export const fetchDatas = async (methodName, url, data = null) => {
-    const API_ENDPOINT = "http://51.21.191.78:5000/api"; // Ensure correct port
-    // const API_ENDPOINT = "http://192.168.1.102:2000/api"; // Ensure correct port
+    // const API_ENDPOINT = "https://nexgen-e.com/api"; // Ensure correct port
+    const API_ENDPOINT = "http://192.168.1.108:5000/api"; // Ensure correct port
 
     try {
         let response;

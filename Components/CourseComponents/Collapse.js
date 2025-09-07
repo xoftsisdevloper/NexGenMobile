@@ -25,7 +25,7 @@ const CollapsibleView = ({ title, index, children }) => {
         <View style={[styles.titleParent, index === 0 && { borderTopWidth: 0 }]}> 
           <View style={styles.titleContainer}>
             <View style= {{flexDirection: 'row', flex: 1,}}>
-              <Text style={{color: '#0147ab'}}>Subject {index + 1} : </Text>
+              <Text style={{color: '#85db51'}}>Subject {index + 1} : </Text>
               <Text style={{ fontWeight: '700', flexWrap: 'wrap', flexShrink: 2 }}>{title}</Text>
             </View>
             <View style={{marginLeft: 10}}>

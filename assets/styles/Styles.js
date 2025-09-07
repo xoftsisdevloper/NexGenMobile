@@ -55,7 +55,8 @@ export const CourseCardFullBlock = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     elevation: 0,
-    borderWidth: 0,
+    borderWidth: 2,
+    borderColor: '#85db51'
   },
 
   cardImage: {
@@ -132,7 +133,7 @@ export const CourseCardFullBlock = StyleSheet.create({
     borderTopRightRadius: 8,
     borderBottomLeftRadius: 8,
     borderWidth: 1,
-    borderColor: '#0147ab'
+    borderColor: '#85db51'
   },
 
   newText: {
@@ -150,7 +151,7 @@ export const CourseCardFullBlock = StyleSheet.create({
 export const homeStyle = StyleSheet.create({
   screenBg: {
     flex: 1,
-    backgroundColor: colorPalette.aliceBlue,
+    backgroundColor: colorPalette.white,
   },
 
   courseFlex: {
@@ -162,8 +163,11 @@ export const homeStyle = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#0147ab'
+    color: '#85db51'
   },
+
+  scrollViewContent:{
+  }
 
 });
 
@@ -220,17 +224,20 @@ export const loginBeforeScreenstyles = StyleSheet.create({
   },
 
   teacherImg: {
-    width: 100,
+    width: '90%',
     height: 100,
     marginBottom: 10,
+    borderRadius: 10
   },
 
   titleText: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: colorPalette.blue,
-    width: '100%',
+    color: colorPalette.white,
+    width: '80%',
     textAlign: 'center',
+    backgroundColor: colorPalette.blue,
+    borderRadius: 5
   },
 
   innerBox: {

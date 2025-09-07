@@ -52,13 +52,15 @@ export const GetCourseByID = async (id) => {
 }
 
 export const SubmitRating = async (rating, course_id) => {
-try {
-    const response = await fetchDatas('get', `/courses/${id}`);
+  try 
+  {
+    const response = await fetchDatas('post', `/courses/${course_id}/rate`, rating);
     if (response) {
       return { success: true, data: response };
     }
   } catch (error) {
-    console.error('Error during Approving the user:', error.response?.data?.message || error.message);
+    console.error(error.message)
+    console.error('Error submitting the rating:', error.response?.data?.message || error.message);
     return { success: false, error: error.response?.data?.message || error.message };
   }
 }

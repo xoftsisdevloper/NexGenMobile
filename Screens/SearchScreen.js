@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   activeFilter: {
-    backgroundColor: '#0147ab',
+    backgroundColor: '#85db51',
   },
   filterText: {
     color: '#fff',

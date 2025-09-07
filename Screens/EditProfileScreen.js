@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
         padding: 20,
-        backgroundColor: '#0147ab',
+        backgroundColor: '#85db51',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
         color: '#000',
     },
     formTitleView: {
-        color: '#0147ab',
+        color: '#85db51',
         fontWeight: 'bold',
         fontSize: 20,
         marginBottom: 20,
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
     },
     registerButton: {
         marginTop: 20,
-        backgroundColor: '#0147ab',
+        backgroundColor: '#85db51',
         paddingVertical: 14,
         borderRadius: 8,
         alignItems: 'center',
