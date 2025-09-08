@@ -17,6 +17,8 @@ const LoginScreen = ({ route }) => {
 
   // Handle login
   const handleLogin = async () => {
+        console.log("The click")
+
     if (!username || !password) {
       Toast.show({ type: 'error', text1: 'Please fill all fields' });
       return;

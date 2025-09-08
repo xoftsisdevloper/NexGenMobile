@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import {
   View, FlatList, ScrollView, StyleSheet,
   TouchableOpacity, ActivityIndicator, Modal, TextInput,
-  RefreshControl
+  RefreshControl,
+  TouchableWithoutFeedback
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Image, Text } from 'react-native-elements';
@@ -15,7 +16,7 @@ import Toast from 'react-native-toast-message';
 import { homeStyle } from '../assets/styles/Styles';
 import { colorPalette } from '../assets/styles/Colors';
 
-const courseTypes = ['all', 'general', 'academic', 'school', 'college'];
+const courseTypes = [ 'public', 'private'];
 
 const HomeScreen = () => {
   const [courses, setCourses] = useState([]);
@@ -28,6 +29,7 @@ const HomeScreen = () => {
   const navigator = useNavigation();
   const { authUser } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
+  const [dropdownVisible, setDropdownVisible] = useState(false);
 
   // Fetch courses
   const fetchData = async () => {
@@ -55,14 +57,14 @@ const HomeScreen = () => {
   // Filter data into general, pending, and approved sets
   useEffect(() => {
     const generalCourses = courses
-      .filter(course => course.course_type?.toLowerCase() === 'general')
+      .filter(course => course.course_type?.toLowerCase() === 'public')
       .map(course => ({ ...course, isPending: false }));
 
     const pendingCourses = courses
       .filter(course =>
         course.joinRequests?.some(request =>
           request.user._id === authUser._id && request.status === 'pending'
-        ) && course.course_type !== 'general'
+        ) && course.course_type !== 'public'
       )
       .map(course => ({ ...course, isPending: true }));
 
@@ -70,7 +72,7 @@ const HomeScreen = () => {
       .filter(course =>
         course.joinRequests?.some(request =>
           request.user._id === authUser._id && request.status === 'approved'
-        ) && course.course_type !== 'general'
+        ) && course.course_type !== 'public'
       )
       .map(course => ({ ...course, isPending: false }));
 
@@ -143,54 +145,70 @@ const HomeScreen = () => {
 
   // Render course filters
   const renderCourseFilters = () => (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      style={{ marginTop: 10, paddingTop: 10, width: '95%', margin: 'auto' }}
-      contentContainerStyle={styles.filterRow}
-    >
-      {courseTypes.map(type => {
-        const count = getCourseCountByType(type);
-        const isActive = selectedType === type;
-
-        return (
+     <View style={styles.dropdownContainer}>
+          <Text style={styles.dropdownLabel}>Filter by Category</Text>
           <TouchableOpacity
-            key={type}
-            style={[
-              styles.filterButton,
-              isActive ? styles.activeFilter : styles.inactiveFilter,
-            ]}
-            onPress={() => setSelectedType(type)}
+            style={styles.dropdownButton}
+            onPress={() => setDropdownVisible(true)}
           >
-            <Text
-              style={[
-                styles.filterText,
-                isActive ? styles.activeFilterText : styles.inactiveFilterText,
-              ]}
-            >
-              {type.charAt(0).toUpperCase() + type.slice(1)}
+            <Text style={styles.dropdownButtonText}>
+              {selectedType === 'all'
+                ? 'All Courses'
+                : selectedType.charAt(0).toUpperCase() + selectedType.slice(1)}
             </Text>
-
-            {/* Badge */}
-            <View
-              style={[
-                styles.badge,
-                isActive ? styles.activeBadge : styles.inactiveBadge,
-              ]}
+            <Svg
+              xmlns="http://www.w3.org/2000/svg"
+              width={18}
+              height={18}
+              viewBox="0 0 24 24"
+              fill="none"
             >
-              <Text
-                style={[
-                  styles.badgeText,
-                  isActive ? styles.activeBadgeText : styles.inactiveBadgeText,
-                ]}
-              >
-                {count}
-              </Text>
-            </View>
+              <Path
+                d="M6 9l6 6 6-6"
+                stroke="#555"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </Svg>
           </TouchableOpacity>
-        );
-      })}
-    </ScrollView>
+    
+          {/* Dropdown Modal */}
+          <Modal
+            animationType="fade"
+            transparent
+            visible={dropdownVisible}
+            onRequestClose={() => setDropdownVisible(false)}
+          >
+            <TouchableWithoutFeedback onPress={() => setDropdownVisible(false)}>
+              <View style={styles.modalOverlay}>
+                <View style={styles.dropdownModal}>
+                  {['all', ...courseTypes].map((type) => (
+                    <TouchableOpacity
+                      key={type}
+                      style={styles.dropdownItem}
+                      onPress={() => {
+                        setSelectedType(type);
+                        setDropdownVisible(false);
+                      }}
+                    >
+                      <Text
+                        style={[
+                          styles.dropdownItemText,
+                          selectedType === type && styles.dropdownItemTextActive,
+                        ]}
+                      >
+                        {type === 'all'
+                          ? 'All Courses'
+                          : type.charAt(0).toUpperCase() + type.slice(1)}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
+          </Modal>
+        </View>
   );
 
   const getFirstName = (fullName) => {
@@ -217,7 +235,6 @@ const HomeScreen = () => {
               <Path d="M12 6.93994C9.93 6.93994 8.25 8.61994 8.25 10.6899C8.25 12.7199 9.84 14.3699 11.95 14.4299C11.98 14.4299 12.02 14.4299 12.04 14.4299C12.06 14.4299 12.09 14.4299 12.11 14.4299C12.12 14.4299 12.13 14.4299 12.13 14.4299C14.15 14.3599 15.74 12.7199 15.75 10.6899C15.75 8.61994 14.07 6.93994 12 6.93994Z" fill="#fff" />
               <Path d="M18.7807 19.36C17.0007 21 14.6207 22.01 12.0007 22.01C9.3807 22.01 7.0007 21 5.2207 19.36C5.4607 18.45 6.1107 17.62 7.0607 16.98C9.7907 15.16 14.2307 15.16 16.9407 16.98C17.9007 17.62 18.5407 18.45 18.7807 19.36Z" fill="#fff" />
             </Svg>
-          <Text style={{fontSize: 20, color: '#fff', fontWeight: '700' }}>Profile</Text>
           </TouchableOpacity>
         </View>
 
@@ -309,7 +326,6 @@ const styles = StyleSheet.create({
   },
   loginText: {
     fontSize: 25,
-    fontWeight: '700',
     textTransform: 'capitalize',
     color: '#ffffff',
   },
@@ -501,6 +517,73 @@ const styles = StyleSheet.create({
     shadowRadius: 1,
   },
 
+  dropdownContainer: {
+    flexDirection: 'row',
+    marginTop: 10,
+    marginBottom: 15,
+    paddingHorizontal: 15,
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    columnGap: 10
+  },
+  dropdownLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 5,
+    alignSelf: 'center'
+  },
+  dropdownButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderColor: '#85db51',
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 2,
+    width: '40%'
+
+  },
+  dropdownButtonText: {
+    fontSize: 15,
+    color: '#333',
+    fontWeight: '500',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dropdownModal: {
+    backgroundColor: '#fff',
+    width: 300,
+    borderRadius: 10,
+    paddingVertical: 10,
+    elevation: 5,
+  },
+  dropdownItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+  },
+  dropdownItemText: {
+    fontSize: 15,
+    color: '#333',
+  },
+  dropdownItemTextActive: {
+    color: '#85db51',
+    fontWeight: '700',
+  },
+  btnText: {
+    color: '#fff',
+    fontWeight: '700',
+  },
 });
 
 export default HomeScreen;

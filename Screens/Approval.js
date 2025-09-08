@@ -38,7 +38,7 @@ const Approvals = () => {
     try {
       setIsLoading(true);
       const result = await fetchCourses();
-      const teacherCourser = result.filter((f) => f.created_by === authUser?._id && f.course_type != 'general');
+      const teacherCourser = result.filter((f) => f.created_by === authUser?._id && f.course_type != 'public');
       setCourses(teacherCourser || []);
     } catch (err) {
       console.error('Failed to fetch courses:', err);

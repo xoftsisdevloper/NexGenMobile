@@ -18,14 +18,10 @@ export const TeacherCourseCard = ({ course, showType = 'normal', courses }) => {
 
     const colorForCourseType = (courseType) => {
         switch (courseType) {
-            case 'general':
+            case 'public':
                 return 'rgba(27, 171, 1, 0.19)'; // Green
-            case 'academic':
+            case 'private':
                 return 'rgba(251, 160, 2, 0.43)'; // Orange
-            case 'school':
-                return 'rgba(2, 234, 251, 0.28)'; // Orange
-            case 'college':
-                return 'rgba(234, 251, 2, 0.32)';
             default:
                 return '#000'; // Default color
         }

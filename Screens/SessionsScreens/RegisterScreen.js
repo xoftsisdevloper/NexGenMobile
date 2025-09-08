@@ -146,6 +146,7 @@ const RegisterScreen = ({ route }) => {
   };
 
   const handleRegister = async () => {
+    console.log("The click")
     if (
       !username ||
       !email ||
@@ -194,7 +195,6 @@ const RegisterScreen = ({ route }) => {
 
       if (result && result.success) {
         Toast.show({ type: 'success', text1: 'Registered Successfully' });
-        setAuthUser(result.data.user);
         navigation.navigate('Login');
       } else {
         Toast.show({ type: 'error', text1: result?.error || 'Registration failed' });

@@ -18,14 +18,10 @@ export const CourseCard = ({ course, showType = 'normal', courses }) => {
 
     const colorForCourseType = (courseType) => {
         switch (courseType) {
-            case 'general':
+            case 'public':
                 return 'rgba(27, 171, 1, 0.19)'; // Green
-            case 'academic':
+            case 'private':
                 return 'rgba(251, 160, 2, 0.43)'; // Orange
-            case 'school':
-                return 'rgba(2, 234, 251, 0.28)'; // Orange
-            case 'college':
-                return 'rgba(234, 251, 2, 0.32)';
             default:
                 return '#000'; // Default color
         }
@@ -129,8 +125,8 @@ export const CourseCard = ({ course, showType = 'normal', courses }) => {
             </Card>
             {
                 course.isPending && (
-                    <View style={{ backgroundColor: "rgba(191, 191, 191, 0.47)", position: "absolute", top: 15, right: 0, width: "100%", height: 100, justifyContent: "center", alignItems: "center", padding: 0, borderRadius: 10 }}>
-                        <Text style={{ fontSize: 14, padding: 10, backgroundColor: 'rgb(255, 221, 0)', borderRadius: 10, color: '#000', fontWeight: '700' }}> Approval Pending</Text>
+                    <View style={{ backgroundColor: "rgba(191, 191, 191, 0.47)", position: "absolute", top: 15, right: 0, width: "100%", height: '105', justifyContent: "flex-start", alignItems: "flex-end", padding: 0, borderRadius: 10 }}>
+                        <Text style={{ fontSize:12, padding: 10, backgroundColor: 'rgb(255, 221, 0)', borderTopRightRadius: 5, color: '#000', fontWeight: '700' }}> Approval Pending</Text>
                     </View>
                 )
             }

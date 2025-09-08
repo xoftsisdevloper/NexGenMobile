@@ -160,7 +160,7 @@ export const homeStyle = StyleSheet.create({
   },
 
   titleText: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
     color: '#85db51'

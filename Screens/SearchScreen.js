@@ -16,7 +16,7 @@ import Svg, { Path } from 'react-native-svg';
 import { useAuth } from '../Navigation/AuthContext';
 import { colorPalette } from '../assets/styles/Colors';
 
-const courseTypes = ['all', 'general', 'school', 'college', 'academic'];
+const courseTypes = ["public", "private"];
 
 const SearchScreen = () => {
   const [courses, setCourses] = useState([]);
@@ -37,16 +37,16 @@ const SearchScreen = () => {
 
       if (isTeacherOrAdmin) {
         // Show all non-general courses for teachers/admins
-        relevantCourses = allCourses.filter(course => course.course_type !== 'general' && course.created_by === authUser._id);
+        relevantCourses = allCourses.filter(course => course.course_type !== 'public' && course.created_by === authUser._id);
       } else {
         // For students: show only approved or pending non-general courses
         const pendingCourses = allCourses.filter(course =>
-          course.course_type !== 'general' &&
+          course.course_type !== 'public' &&
           course.joinRequests?.some(req => req.user._id === authUser._id && req.status === 'pending')
         ).map(c => ({ ...c, isPending: true }));
 
         const approvedCourses = allCourses.filter(course =>
-          course.course_type !== 'general' &&
+          course.course_type !== 'public' &&
           course.joinRequests?.some(req => req.user._id === authUser._id && req.status === 'approved')
         ).map(c => ({ ...c, isPending: false }));
 

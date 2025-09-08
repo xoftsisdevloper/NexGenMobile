@@ -37,3 +37,5 @@ export const fetchDatas = async (methodName, url, data = null) => {
         throw error;
     }
 };
+
+

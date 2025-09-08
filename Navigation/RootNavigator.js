@@ -279,8 +279,6 @@ const RootNavigator = () => {
       >
         <Tab.Screen name="Courses" component={TeacherHomeStack} />
         <Tab.Screen name="Students" component={UserStack} />
-        <Tab.Screen name="Approvals" component={ApprovalStack} />
-        <Tab.Screen name="Search" component={TeacherSearchStack} />
         <Tab.Screen name="Profile" component={ProfileStack} />
       </Tab.Navigator>
     )
